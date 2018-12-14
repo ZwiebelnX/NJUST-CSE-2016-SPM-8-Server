@@ -8,8 +8,10 @@ import org.springframework.web.bind.annotation.RestController;
 public class HelloWorldController {
 
     @RequestMapping("/hello")
-    public String index() {
-        JSONObject jsonObject = new JSONObject("{ \"hello\" : \"world\" }");
-        return jsonObject.toString();
+    public JSONObject index() {
+        JSONObject jsonObject = new JSONObject();
+        jsonObject.put("hello", "world");
+        System.out.println(jsonObject);
+        return jsonObject;
     }
 }
