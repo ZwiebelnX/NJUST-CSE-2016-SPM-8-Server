@@ -9,4 +9,5 @@ public class GoodgoodstudyServerApplication {
     public static void main(String[] args) {
         SpringApplication.run(GoodgoodstudyServerApplication.class, args);
     }
+
 }
