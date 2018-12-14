@@ -13,7 +13,8 @@ public class FaceBean {
     private String Name;
     private String faceToken;
     private String faceImagePath;
-
+//    @OneToMany(mappedBy = "FaceBean",cascade = CascadeType.ALL,fetch = FetchType.LAZY)
+//    private List<SigninBean> SigninBeans;
     public void setName(String name) {
         Name = name;
     }
