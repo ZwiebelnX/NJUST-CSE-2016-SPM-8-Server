@@ -1,7 +1,7 @@
 package com.spm8.goodgoodstudyserver.Controller;
 
+import com.spm8.goodgoodstudyserver.Entities.StudentEntity;
 import com.spm8.goodgoodstudyserver.Util.FaceUtil;
-import com.spm8.goodgoodstudyserver.domain.FaceBean;
 import com.spm8.goodgoodstudyserver.service.FaceService;
 import org.json.JSONArray;
 import org.json.JSONObject;
@@ -39,9 +39,9 @@ public class FaceregController {
             }
             JSONObject josnToken= faces.getJSONObject(0);
             String faceToken=josnToken.getString("face_token");
-            FaceBean user = new FaceBean();
+            StudentEntity user = new StudentEntity();
             System.out.println("hahaha"+name+" "+faceToken);
-            user.setName(name);
+            user.setStudentName(name);
             user.setFaceToken(faceToken);
             faceService.save(user);
         } catch (Exception e) {
