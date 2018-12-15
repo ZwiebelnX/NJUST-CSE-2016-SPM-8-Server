@@ -14,7 +14,7 @@ public class SignupEntity {
     private String signupResult;
 
     @Id
-    @Column(name = "SIGNUP_ID")
+    @Column(name = "SIGNUP_ID", nullable = false)
     public int getSignupId() {
         return signupId;
     }
@@ -24,7 +24,7 @@ public class SignupEntity {
     }
 
     @Basic
-    @Column(name = "STUDENT_ID")
+    @Column(name = "STUDENT_ID", nullable = true)
     public Integer getStudentId() {
         return studentId;
     }
@@ -34,7 +34,7 @@ public class SignupEntity {
     }
 
     @Basic
-    @Column(name = "COURSE_ID")
+    @Column(name = "COURSE_ID", nullable = true)
     public Integer getCourseId() {
         return courseId;
     }
@@ -44,7 +44,7 @@ public class SignupEntity {
     }
 
     @Basic
-    @Column(name = "SIGNUP_TIME")
+    @Column(name = "SIGNUP_TIME", nullable = true)
     public Timestamp getSignupTime() {
         return signupTime;
     }
@@ -54,7 +54,7 @@ public class SignupEntity {
     }
 
     @Basic
-    @Column(name = "SIGNUP_RESULT")
+    @Column(name = "SIGNUP_RESULT", nullable = true, length = 255)
     public String getSignupResult() {
         return signupResult;
     }

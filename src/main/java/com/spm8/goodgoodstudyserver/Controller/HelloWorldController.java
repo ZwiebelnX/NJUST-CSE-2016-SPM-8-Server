@@ -9,7 +9,9 @@ public class HelloWorldController {
 
     @RequestMapping("/hello")
     public String index() {
-        JSONObject jsonObject = new JSONObject("{ \"hello\" : \"world\" }");
+        JSONObject jsonObject = new JSONObject();
+        jsonObject.put("hello", "world");
+        System.out.println(jsonObject);
         return jsonObject.toString();
     }
 }

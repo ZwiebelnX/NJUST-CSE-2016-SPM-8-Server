@@ -15,7 +15,7 @@ public class CourseEntity {
     private String signupCount;
 
     @Id
-    @Column(name = "COURSE_ID")
+    @Column(name = "COURSE_ID", nullable = false)
     public int getCourseId() {
         return courseId;
     }
@@ -25,7 +25,7 @@ public class CourseEntity {
     }
 
     @Basic
-    @Column(name = "COURSE_NAME")
+    @Column(name = "COURSE_NAME", nullable = true, length = 255)
     public String getCourseName() {
         return courseName;
     }
@@ -35,7 +35,7 @@ public class CourseEntity {
     }
 
     @Basic
-    @Column(name = "TEACHER_ID")
+    @Column(name = "TEACHER_ID", nullable = true)
     public Integer getTeacherId() {
         return teacherId;
     }
@@ -45,7 +45,7 @@ public class CourseEntity {
     }
 
     @Basic
-    @Column(name = "CREDIT")
+    @Column(name = "CREDIT", nullable = true, length = 255)
     public String getCredit() {
         return credit;
     }
@@ -55,7 +55,7 @@ public class CourseEntity {
     }
 
     @Basic
-    @Column(name = "CLASSROOM")
+    @Column(name = "CLASSROOM", nullable = true, length = 255)
     public String getClassroom() {
         return classroom;
     }
@@ -65,7 +65,7 @@ public class CourseEntity {
     }
 
     @Basic
-    @Column(name = "CLASSHOUR")
+    @Column(name = "CLASSHOUR", nullable = true, length = 255)
     public String getClasshour() {
         return classhour;
     }
@@ -75,7 +75,7 @@ public class CourseEntity {
     }
 
     @Basic
-    @Column(name = "SIGNUP_COUNT")
+    @Column(name = "SIGNUP_COUNT", nullable = true, length = 255)
     public String getSignupCount() {
         return signupCount;
     }

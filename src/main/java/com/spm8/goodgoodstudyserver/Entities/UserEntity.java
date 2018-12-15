@@ -15,7 +15,7 @@ public class UserEntity {
     private String type;
 
     @Id
-    @Column(name = "USER_ID")
+    @Column(name = "USER_ID", nullable = false)
     public int getUserId() {
         return userId;
     }
@@ -25,7 +25,7 @@ public class UserEntity {
     }
 
     @Basic
-    @Column(name = "USER_NAME")
+    @Column(name = "USER_NAME", nullable = true, length = 255)
     public String getUserName() {
         return userName;
     }
@@ -35,7 +35,7 @@ public class UserEntity {
     }
 
     @Basic
-    @Column(name = "COLLEGE")
+    @Column(name = "COLLEGE", nullable = true, length = 255)
     public String getCollege() {
         return college;
     }
@@ -45,7 +45,7 @@ public class UserEntity {
     }
 
     @Basic
-    @Column(name = "ID_NUMBER")
+    @Column(name = "ID_NUMBER", nullable = true, length = 255)
     public String getIdNumber() {
         return idNumber;
     }
@@ -55,7 +55,7 @@ public class UserEntity {
     }
 
     @Basic
-    @Column(name = "MAJOR")
+    @Column(name = "MAJOR", nullable = true, length = 255)
     public String getMajor() {
         return major;
     }
@@ -65,7 +65,7 @@ public class UserEntity {
     }
 
     @Basic
-    @Column(name = "PASSWORD")
+    @Column(name = "PASSWORD", nullable = true, length = 255)
     public String getPassword() {
         return password;
     }
@@ -75,7 +75,7 @@ public class UserEntity {
     }
 
     @Basic
-    @Column(name = "TYPE")
+    @Column(name = "TYPE", nullable = true, length = 255)
     public String getType() {
         return type;
     }

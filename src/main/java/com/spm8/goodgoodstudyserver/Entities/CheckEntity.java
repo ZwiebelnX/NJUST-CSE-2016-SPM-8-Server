@@ -14,7 +14,11 @@ public class CheckEntity {
     private Timestamp checkTime;
 
     @Id
+<<<<<<< HEAD
     @Column(name = "CHECK_ID")
+=======
+    @Column(name = "CHECK_ID", nullable = false)
+>>>>>>> origin/master
     public int getCheckId() {
         return checkId;
     }
@@ -24,7 +28,11 @@ public class CheckEntity {
     }
 
     @Basic
+<<<<<<< HEAD
     @Column(name = "COURSE_ID")
+=======
+    @Column(name = "COURSE_ID", nullable = true)
+>>>>>>> origin/master
     public Integer getCourseId() {
         return courseId;
     }
@@ -34,7 +42,11 @@ public class CheckEntity {
     }
 
     @Basic
+<<<<<<< HEAD
     @Column(name = "ALIVE_PRECENT")
+=======
+    @Column(name = "ALIVE_PRECENT", nullable = true, length = 255)
+>>>>>>> origin/master
     public String getAlivePrecent() {
         return alivePrecent;
     }
@@ -44,7 +56,11 @@ public class CheckEntity {
     }
 
     @Basic
+<<<<<<< HEAD
     @Column(name = "DESERT_PRECENT")
+=======
+    @Column(name = "DESERT_PRECENT", nullable = true, length = 255)
+>>>>>>> origin/master
     public String getDesertPrecent() {
         return desertPrecent;
     }
@@ -54,7 +70,11 @@ public class CheckEntity {
     }
 
     @Basic
+<<<<<<< HEAD
     @Column(name = "CHECK_TIME")
+=======
+    @Column(name = "CHECK_TIME", nullable = true)
+>>>>>>> origin/master
     public Timestamp getCheckTime() {
         return checkTime;
     }

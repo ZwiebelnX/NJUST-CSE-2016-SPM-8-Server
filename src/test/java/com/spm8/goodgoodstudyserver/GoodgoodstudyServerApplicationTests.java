@@ -11,6 +11,7 @@ public class GoodgoodstudyServerApplicationTests {
 
     @Test
     public void contextLoads() {
+
     }
 
 }

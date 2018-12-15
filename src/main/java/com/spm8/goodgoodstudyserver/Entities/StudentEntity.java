@@ -11,7 +11,7 @@ public class StudentEntity {
     private String faceToken;
 
     @Id
-    @Column(name = "STUDENT_ID")
+    @Column(name = "STUDENT_ID", nullable = false)
     public int getStudentId() {
         return studentId;
     }
@@ -21,7 +21,7 @@ public class StudentEntity {
     }
 
     @Basic
-    @Column(name = "STUDENT_NAME")
+    @Column(name = "STUDENT_NAME", nullable = true, length = 255)
     public String getStudentName() {
         return studentName;
     }
@@ -31,7 +31,7 @@ public class StudentEntity {
     }
 
     @Basic
-    @Column(name = "FACE_TOKEN")
+    @Column(name = "FACE_TOKEN", nullable = true, length = 255)
     public String getFaceToken() {
         return faceToken;
     }

@@ -11,7 +11,7 @@ public class ParticipateEntity {
     private int studentId;
 
     @Id
-    @Column(name = "COURSE_ID")
+    @Column(name = "COURSE_ID", nullable = false)
     public int getCourseId() {
         return courseId;
     }
@@ -21,7 +21,7 @@ public class ParticipateEntity {
     }
 
     @Id
-    @Column(name = "STUDENT_ID")
+    @Column(name = "STUDENT_ID", nullable = false)
     public int getStudentId() {
         return studentId;
     }
