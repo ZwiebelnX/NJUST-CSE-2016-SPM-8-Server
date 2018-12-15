@@ -6,17 +6,17 @@ import java.util.Objects;
 @Entity
 @Table(name = "student", schema = "haohaoxuexi", catalog = "")
 public class StudentEntity {
-    private int studentId;
+    private String studentId;
     private String studentName;
     private String faceToken;
 
     @Id
-    @Column(name = "STUDENT_ID", nullable = false)
-    public int getStudentId() {
+    @Column(name = "STUDENT_ID", nullable = false, length = 255)
+    public String getStudentId() {
         return studentId;
     }
 
-    public void setStudentId(int studentId) {
+    public void setStudentId(String studentId) {
         this.studentId = studentId;
     }
 
@@ -45,7 +45,7 @@ public class StudentEntity {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
         StudentEntity that = (StudentEntity) o;
-        return studentId == that.studentId &&
+        return Objects.equals(studentId, that.studentId) &&
                 Objects.equals(studentName, that.studentName) &&
                 Objects.equals(faceToken, that.faceToken);
     }

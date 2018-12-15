@@ -7,7 +7,7 @@ import java.util.Objects;
 
 public class ParticipateEntityPK implements Serializable {
     private int courseId;
-    private int studentId;
+    private String studentId;
 
     @Column(name = "COURSE_ID", nullable = false)
     @Id
@@ -19,13 +19,13 @@ public class ParticipateEntityPK implements Serializable {
         this.courseId = courseId;
     }
 
-    @Column(name = "STUDENT_ID", nullable = false)
+    @Column(name = "STUDENT_ID", nullable = false, length = 255)
     @Id
-    public int getStudentId() {
+    public String getStudentId() {
         return studentId;
     }
 
-    public void setStudentId(int studentId) {
+    public void setStudentId(String studentId) {
         this.studentId = studentId;
     }
 
@@ -35,7 +35,7 @@ public class ParticipateEntityPK implements Serializable {
         if (o == null || getClass() != o.getClass()) return false;
         ParticipateEntityPK that = (ParticipateEntityPK) o;
         return courseId == that.courseId &&
-                studentId == that.studentId;
+                Objects.equals(studentId, that.studentId);
     }
 
     @Override

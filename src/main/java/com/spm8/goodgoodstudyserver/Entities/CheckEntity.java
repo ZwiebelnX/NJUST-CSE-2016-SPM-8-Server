@@ -12,6 +12,7 @@ public class CheckEntity {
     private String alivePrecent;
     private String desertPrecent;
     private Timestamp checkTime;
+    private Integer checkCnt;
 
     @Id
 <<<<<<< HEAD
@@ -83,6 +84,16 @@ public class CheckEntity {
         this.checkTime = checkTime;
     }
 
+    @Basic
+    @Column(name = "CHECK_CNT", nullable = true)
+    public Integer getCheckCnt() {
+        return checkCnt;
+    }
+
+    public void setCheckCnt(Integer checkCnt) {
+        this.checkCnt = checkCnt;
+    }
+
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;
@@ -92,11 +103,12 @@ public class CheckEntity {
                 Objects.equals(courseId, that.courseId) &&
                 Objects.equals(alivePrecent, that.alivePrecent) &&
                 Objects.equals(desertPrecent, that.desertPrecent) &&
-                Objects.equals(checkTime, that.checkTime);
+                Objects.equals(checkTime, that.checkTime) &&
+                Objects.equals(checkCnt, that.checkCnt);
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(checkId, courseId, alivePrecent, desertPrecent, checkTime);
+        return Objects.hash(checkId, courseId, alivePrecent, desertPrecent, checkTime, checkCnt);
     }
 }

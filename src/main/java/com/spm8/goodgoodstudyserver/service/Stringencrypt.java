@@ -1,4 +1,4 @@
-package com.spm8.goodgoodstudyserver.service;
+package com.spm8.goodgoodstudyserver.Service;
 
 import org.springframework.stereotype.Service;
 
