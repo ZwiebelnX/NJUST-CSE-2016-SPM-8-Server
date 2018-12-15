@@ -1,4 +1,4 @@
-package com.spm8.goodgoodstudyserver.Util;
+package com.spm8.goodgoodstudyserver.util;
 
 import sun.misc.BASE64Decoder;
 

@@ -1,15 +1,10 @@
-package com.spm8.goodgoodstudyserver.Controller;
+package com.spm8.goodgoodstudyserver.controller;
 
-import com.spm8.goodgoodstudyserver.Service.LoginService;
+import com.spm8.goodgoodstudyserver.service.LoginService;
 import org.json.JSONException;
 import org.json.JSONObject;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
-
-import javax.annotation.Resource;
-import javax.servlet.http.HttpServletRequest;
-import java.io.BufferedReader;
-import java.io.InputStreamReader;
 
 @RestController
 public class LoginController {

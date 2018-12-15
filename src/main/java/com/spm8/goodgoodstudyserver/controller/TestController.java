@@ -1,7 +1,7 @@
-package com.spm8.goodgoodstudyserver.Controller;
+package com.spm8.goodgoodstudyserver.controller;
 
-import com.spm8.goodgoodstudyserver.Service.LoginService;
-import com.spm8.goodgoodstudyserver.Service.Stringencrypt;
+import com.spm8.goodgoodstudyserver.service.LoginService;
+import com.spm8.goodgoodstudyserver.service.Stringencrypt;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;

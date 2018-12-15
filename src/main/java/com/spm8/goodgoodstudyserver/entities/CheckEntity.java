@@ -1,4 +1,4 @@
-package com.spm8.goodgoodstudyserver.Entities;
+package com.spm8.goodgoodstudyserver.entities;
 
 import javax.persistence.*;
 import java.sql.Timestamp;

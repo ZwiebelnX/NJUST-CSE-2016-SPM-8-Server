@@ -1,4 +1,4 @@
-package com.spm8.goodgoodstudyserver.entities;
+package com.spm8.goodgoodstudyserver.Entities;
 
 import javax.persistence.*;
 import java.util.Objects;

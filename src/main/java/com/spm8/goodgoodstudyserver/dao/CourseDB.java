@@ -1,6 +1,6 @@
-package com.spm8.goodgoodstudyserver.Dao;
+package com.spm8.goodgoodstudyserver.dao;
 
-import com.spm8.goodgoodstudyserver.Entities.*;
+import com.spm8.goodgoodstudyserver.entities.*;
 
 import java.util.List;
 

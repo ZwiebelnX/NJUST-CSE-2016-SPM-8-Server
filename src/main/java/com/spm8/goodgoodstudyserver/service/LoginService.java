@@ -1,13 +1,13 @@
-package com.spm8.goodgoodstudyserver.Service;
+package com.spm8.goodgoodstudyserver.service;
 
-import com.spm8.goodgoodstudyserver.Dao.AccountDBImpl;
-import com.spm8.goodgoodstudyserver.Dao.CourseDB;
-import com.spm8.goodgoodstudyserver.Entities.*;
+import com.spm8.goodgoodstudyserver.dao.AccountDBImpl;
+import com.spm8.goodgoodstudyserver.dao.CourseDB;
+import com.spm8.goodgoodstudyserver.entities.*;
 import org.json.JSONArray;
 import org.json.JSONObject;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
-import com.spm8.goodgoodstudyserver.Entities.*;
+
 import java.util.List;
 
 @Service
