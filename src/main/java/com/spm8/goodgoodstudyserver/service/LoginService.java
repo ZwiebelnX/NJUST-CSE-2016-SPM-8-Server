@@ -1,6 +1,6 @@
 package com.spm8.goodgoodstudyserver.service;
 
-import com.spm8.goodgoodstudyserver.dao.AccountDBImpl;
+import com.spm8.goodgoodstudyserver.dao.Impl.AccountDBImpl;
 import com.spm8.goodgoodstudyserver.dao.CourseDB;
 import com.spm8.goodgoodstudyserver.entities.*;
 import org.json.JSONArray;
@@ -26,9 +26,10 @@ public class LoginService {
         UserEntity user=accountDB.getAccountbyUsername(account);
         if(user==null) {
             tmp = "ACCOUNT_ERROR";
-        }else {
-            String realpwd = encoder.DecodeString(user.getPassword());
-            if (realpwd.equals(pwd)) {
+        }
+        else {
+            String realPwd = encoder.DecodeString(user.getPassword());
+            if (realPwd.equals(pwd)) {
                 tmp = "SUCCESS_TEACHER";
                 if(user.getType().equals("ADMIN"))
                     tmp="SUCCESS_ADMIN";
@@ -38,7 +39,7 @@ public class LoginService {
         }
         JSONObject result=new JSONObject();
         result.put("msg",tmp);
-        if(tmp.equals("LOGIN_SUCCESS")){
+        if(tmp.equals("SUCCESS_TEACHER")){
             result.put("realName",user.getUserRealName());
             result.put("teacherID",user.getUserId());
             List<CourseEntity>list=courseDB.getCourseListByTeacherID(user.getUserId());

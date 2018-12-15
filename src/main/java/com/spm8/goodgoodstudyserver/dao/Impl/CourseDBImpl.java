@@ -1,5 +1,6 @@
-package com.spm8.goodgoodstudyserver.dao;
+package com.spm8.goodgoodstudyserver.dao.Impl;
 
+import com.spm8.goodgoodstudyserver.dao.CourseDB;
 import com.spm8.goodgoodstudyserver.entities.*;
 import org.springframework.stereotype.Repository;
 
