@@ -17,7 +17,7 @@ public class LoginController {
         return loginservice.Test("admin");
     }
     //登入的控制器
-    @RequestMapping("login.login")
+    @RequestMapping(value = "login.login", produces="application/json;charset=UTF-8")//设置返回头为json
     @ResponseBody
     public String doLogin(@RequestBody String s){
         String account="",password="";

@@ -29,13 +29,12 @@
                     <label for="password">密码</label>
                     <input type="password" class="form-control" id="password" placeholder="输入密码...">
                 </div>
-                <button class="btn btn-primary" onclick="login()">登录</button>
+                <button type="button" class="btn btn-primary" onclick="login()">登录</button>
             </form>
         </div>
     </div>
 </div>
 <script>
-    let basePath = window.location.host;
     function login() {
         let loginJson = {
             "userName" : $("#userName").val(),
@@ -48,13 +47,15 @@
             url : "login.login",
             contentType: "application/json; charset=utf-8",
             data : JSON.stringify(loginJson),
+            dataType : "json",
             success : function (res) {
                 console.log(res.msg);
-                alert("ok")
+                alert("ok");
             },
-            error : function (res) {
-                console.log(res);
-                alert("fail")
+            error: function(XMLHttpRequest, textStatus, errorThrown) {
+                alert(XMLHttpRequest.status);
+                alert(XMLHttpRequest.readyState);
+                alert(textStatus);
             }
         })
     }
