@@ -8,10 +8,11 @@ import java.util.Objects;
 @Table(name = "signup", schema = "haohaoxuexi", catalog = "")
 public class SignupEntity {
     private int signupId;
-    private Integer studentId;
+    private String studentId;
     private Integer courseId;
     private Timestamp signupTime;
     private String signupResult;
+    private Integer signupCnt;
 
     @Id
     @Column(name = "SIGNUP_ID", nullable = false)
@@ -24,12 +25,12 @@ public class SignupEntity {
     }
 
     @Basic
-    @Column(name = "STUDENT_ID", nullable = true)
-    public Integer getStudentId() {
+    @Column(name = "STUDENT_ID", nullable = true, length = 255)
+    public String getStudentId() {
         return studentId;
     }
 
-    public void setStudentId(Integer studentId) {
+    public void setStudentId(String studentId) {
         this.studentId = studentId;
     }
 
@@ -63,6 +64,16 @@ public class SignupEntity {
         this.signupResult = signupResult;
     }
 
+    @Basic
+    @Column(name = "SIGNUP_CNT", nullable = true)
+    public Integer getSignupCnt() {
+        return signupCnt;
+    }
+
+    public void setSignupCnt(Integer signupCnt) {
+        this.signupCnt = signupCnt;
+    }
+
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;
@@ -72,11 +83,12 @@ public class SignupEntity {
                 Objects.equals(studentId, that.studentId) &&
                 Objects.equals(courseId, that.courseId) &&
                 Objects.equals(signupTime, that.signupTime) &&
-                Objects.equals(signupResult, that.signupResult);
+                Objects.equals(signupResult, that.signupResult) &&
+                Objects.equals(signupCnt, that.signupCnt);
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(signupId, studentId, courseId, signupTime, signupResult);
+        return Objects.hash(signupId, studentId, courseId, signupTime, signupResult, signupCnt);
     }
 }

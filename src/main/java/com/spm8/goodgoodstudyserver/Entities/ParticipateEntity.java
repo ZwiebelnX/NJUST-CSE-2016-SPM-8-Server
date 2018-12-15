@@ -8,7 +8,7 @@ import java.util.Objects;
 @IdClass(ParticipateEntityPK.class)
 public class ParticipateEntity {
     private int courseId;
-    private int studentId;
+    private String studentId;
 
     @Id
     @Column(name = "COURSE_ID", nullable = false)
@@ -21,12 +21,12 @@ public class ParticipateEntity {
     }
 
     @Id
-    @Column(name = "STUDENT_ID", nullable = false)
-    public int getStudentId() {
+    @Column(name = "STUDENT_ID", nullable = false, length = 255)
+    public String getStudentId() {
         return studentId;
     }
 
-    public void setStudentId(int studentId) {
+    public void setStudentId(String studentId) {
         this.studentId = studentId;
     }
 
@@ -36,7 +36,7 @@ public class ParticipateEntity {
         if (o == null || getClass() != o.getClass()) return false;
         ParticipateEntity that = (ParticipateEntity) o;
         return courseId == that.courseId &&
-                studentId == that.studentId;
+                Objects.equals(studentId, that.studentId);
     }
 
     @Override

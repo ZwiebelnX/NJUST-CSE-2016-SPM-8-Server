@@ -13,6 +13,7 @@ public class UserEntity {
     private String major;
     private String password;
     private String type;
+    private String userRealName;
 
     @Id
     @Column(name = "USER_ID", nullable = false)
@@ -84,6 +85,16 @@ public class UserEntity {
         this.type = type;
     }
 
+    @Basic
+    @Column(name = "USER_REAL_NAME", nullable = true, length = 255)
+    public String getUserRealName() {
+        return userRealName;
+    }
+
+    public void setUserRealName(String userRealName) {
+        this.userRealName = userRealName;
+    }
+
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;
@@ -95,11 +106,12 @@ public class UserEntity {
                 Objects.equals(idNumber, that.idNumber) &&
                 Objects.equals(major, that.major) &&
                 Objects.equals(password, that.password) &&
-                Objects.equals(type, that.type);
+                Objects.equals(type, that.type) &&
+                Objects.equals(userRealName, that.userRealName);
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(userId, userName, college, idNumber, major, password, type);
+        return Objects.hash(userId, userName, college, idNumber, major, password, type, userRealName);
     }
 }
