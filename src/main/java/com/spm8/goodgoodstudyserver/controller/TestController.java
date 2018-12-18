@@ -1,7 +1,7 @@
 package com.spm8.goodgoodstudyserver.controller;
 
 import com.spm8.goodgoodstudyserver.service.LoginService;
-import com.spm8.goodgoodstudyserver.service.Stringencrypt;
+import com.spm8.goodgoodstudyserver.util.StringEncrypt;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
@@ -11,7 +11,7 @@ import javax.annotation.Resource;
 @RestController
 public class TestController {
     @Autowired
-    Stringencrypt encoder;
+    StringEncrypt encoder;
     @Resource
     private LoginService loginservice;
 

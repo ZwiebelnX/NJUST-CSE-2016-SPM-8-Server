@@ -1,33 +1,33 @@
-package com.spm8.goodgoodstudyserver.service;
+package com.spm8.goodgoodstudyserver.util;
 
 import org.springframework.stereotype.Service;
 
 import java.util.HashMap;
 import java.util.Map;
 @Service
-public class Stringencrypt {
-    static Map<Character,Character> map=new HashMap<Character,Character>();
-    static Map<Character,Character> map1=new HashMap<Character,Character>();
-    Stringencrypt(){
+public class StringEncrypt {
+    private static Map<Character,Character> encodeMap =new HashMap<Character,Character>();
+    private static Map<Character,Character> decodeMap =new HashMap<Character,Character>();
+    StringEncrypt(){
         String a="abcdefghijklmnopqrstuvwxyz0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZ";
         String b="UnzV4baW5GxqQo2eRrjFS6yPdp1O7TmXsuHNE3JfItlKYkw8L0c9MvDhgCBAZi";
         for(int i=0;i<a.length();i++){
-            map.put(a.charAt(i),b.charAt(i));
-            map1.put(b.charAt(i),a.charAt(i));
+            encodeMap.put(a.charAt(i),b.charAt(i));
+            decodeMap.put(b.charAt(i),a.charAt(i));
         }
     }
     public String EncodeString(String str){
-        String s2= str.toLowerCase();
+        String tempStr= str.toLowerCase();
         String d = "";
-        for (int i = 0; i < s2.length(); i++) {
-            d = d + map.get(s2.charAt(i));
+        for (int i = 0; i < tempStr.length(); i++) {
+            d = d + encodeMap.get(tempStr.charAt(i));
         }
         return d;
     }
     public String DecodeString(String str){
         String d = "";
         for (int i = 0; i < str.length(); i++) {
-            d = d + map1.get(str.charAt(i));
+            d = d + decodeMap.get(str.charAt(i));
         }
         return d;
     }

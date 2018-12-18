@@ -3,6 +3,7 @@ package com.spm8.goodgoodstudyserver.service;
 import com.spm8.goodgoodstudyserver.dao.Impl.AccountDBImpl;
 import com.spm8.goodgoodstudyserver.dao.CourseDB;
 import com.spm8.goodgoodstudyserver.entities.*;
+import com.spm8.goodgoodstudyserver.util.StringEncrypt;
 import org.json.JSONArray;
 import org.json.JSONObject;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -15,7 +16,7 @@ public class LoginService {
     @Autowired
     AccountDBImpl accountDB;
     @Autowired
-    Stringencrypt encoder;
+    StringEncrypt encoder;
     @Autowired
     CourseDB courseDB;
     //传入帐号与密码 传出JSON格式字符串以转发信息信息详情见接口文档
@@ -23,7 +24,7 @@ public class LoginService {
         String tmp;
         if(account==null||pwd==null)
             tmp= "INPUT_DATA_ERROR";
-        UserEntity user=accountDB.getAccountbyUsername(account);
+        UserEntity user=accountDB.getAccountByUsername(account);
         if(user==null) {
             tmp = "ACCOUNT_ERROR";
         }
@@ -59,7 +60,7 @@ public class LoginService {
     }
     //用于测试数据库情况
     public String Test(String s){
-        UserEntity user=accountDB.getAccountbyUsername(s);
+        UserEntity user=accountDB.getAccountByUsername(s);
         return user.getUserName()+";"+user.getCollege();
     }
 }

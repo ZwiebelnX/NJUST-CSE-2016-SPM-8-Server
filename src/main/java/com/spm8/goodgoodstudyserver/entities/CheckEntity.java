@@ -9,8 +9,8 @@ import java.util.Objects;
 public class CheckEntity {
     private int checkId;
     private Integer courseId;
-    private String alivePrecent;
-    private String desertPrecent;
+    private String alivePercent;
+    private String desertPercent;
     private Timestamp checkTime;
     private Integer checkCnt;
 
@@ -35,23 +35,23 @@ public class CheckEntity {
     }
 
     @Basic
-    @Column(name = "ALIVE_PRECENT", nullable = true, length = 255)
-    public String getAlivePrecent() {
-        return alivePrecent;
+    @Column(name = "ALIVE_PERCENT", nullable = true, length = 255)
+    public String getAlivePercent() {
+        return alivePercent;
     }
 
-    public void setAlivePrecent(String alivePrecent) {
-        this.alivePrecent = alivePrecent;
+    public void setAlivePercent(String alivePercent) {
+        this.alivePercent = alivePercent;
     }
 
     @Basic
-    @Column(name = "DESERT_PRECENT", nullable = true, length = 255)
-    public String getDesertPrecent() {
-        return desertPrecent;
+    @Column(name = "DESERT_PERCENT", nullable = true, length = 255)
+    public String getDesertPercent() {
+        return desertPercent;
     }
 
-    public void setDesertPrecent(String desertPrecent) {
-        this.desertPrecent = desertPrecent;
+    public void setDesertPercent(String desertPercent) {
+        this.desertPercent = desertPercent;
     }
 
     @Basic
@@ -81,14 +81,14 @@ public class CheckEntity {
         CheckEntity that = (CheckEntity) o;
         return checkId == that.checkId &&
                 Objects.equals(courseId, that.courseId) &&
-                Objects.equals(alivePrecent, that.alivePrecent) &&
-                Objects.equals(desertPrecent, that.desertPrecent) &&
+                Objects.equals(alivePercent, that.alivePercent) &&
+                Objects.equals(desertPercent, that.desertPercent) &&
                 Objects.equals(checkTime, that.checkTime) &&
                 Objects.equals(checkCnt, that.checkCnt);
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(checkId, courseId, alivePrecent, desertPrecent, checkTime, checkCnt);
+        return Objects.hash(checkId, courseId, alivePercent, desertPercent, checkTime, checkCnt);
     }
 }

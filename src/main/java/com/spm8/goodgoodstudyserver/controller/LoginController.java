@@ -8,14 +8,14 @@ import org.springframework.web.bind.annotation.*;
 
 @RestController
 public class LoginController {
-    @Autowired
     private LoginService loginservice;
 
-    //测试数据库
-    @RequestMapping("testdb")
-    public String testdb(){
-        return loginservice.Test("admin");
+    //通过构造器进行依赖注入
+    @Autowired
+    public LoginController(LoginService loginService){
+        this.loginservice = loginService;
     }
+
     //登入的控制器
     @RequestMapping(value = "login.login", produces="application/json;charset=UTF-8")//设置返回头为json
     @ResponseBody
@@ -27,7 +27,7 @@ public class LoginController {
             account=myJsonObject.getString("userName");
             password=myJsonObject.getString("password");
         } catch (JSONException e){
-            System.out.println("异常");
+            System.out.println("JSON转换异常");
         }
         return loginservice.checkAccount(account,password);
     }

@@ -25,7 +25,7 @@ public class FaceUtil {
         map.put("api_key", "_WbTER4zNul6ANRxxupYZNtl6pNw8cQC");
         map.put("api_secret", "jEJ_oR0HjmEhkM5nEWYsWx_YfOKn7uNb");
         map.put("return_landmark", "1");
-        //map.put("return_attributes", "gender,age,smiling,headpose,facequality,blur,eyestatus,emotion,ethnicity,beauty,mouthstatus,eyegaze,skinstatus");
+        //encodeMap.put("return_attributes", "gender,age,smiling,headpose,facequality,blur,eyestatus,emotion,ethnicity,beauty,mouthstatus,eyegaze,skinstatus");
         byteMap.put("image_file", buff);
         String str =null;
         try{

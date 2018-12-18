@@ -16,7 +16,7 @@ public class AccountDBImpl implements AccountDB {
     EntityManager entityManager;
 
     //以用户名获取账户实体 输入用户名
-    public UserEntity getAccountbyUsername(String accountname){
+    public UserEntity getAccountByUsername(String accountname){
         Query query=entityManager.createQuery(
                 "select p from UserEntity p where p.userName=:accountname");
         query.setParameter("accountname",accountname);
