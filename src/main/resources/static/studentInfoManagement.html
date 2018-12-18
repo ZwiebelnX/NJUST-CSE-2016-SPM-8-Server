@@ -17,7 +17,7 @@
     <title>学生信息</title>
   </head>
   <body>
-   
+
     <div class="navbar  navbar-expand-lg navbar-light bg-light navbar-fixed-top" role="navigation">
         <div class="container">
             <div class="navbar-header">
@@ -35,9 +35,9 @@
                         <a class="nav-link" href="#" style="color:rgb(202, 203, 204)">状态统计</a>
                       </li>
                     </ul>
-                    <ul class="nav navbar-nav navbar-right "> 
-                            <li class="button"><button type="button" class="btn btn-outline-danger">退出</button></li> 
-                        </ul> 
+                    <ul class="nav navbar-nav navbar-right ">
+                            <li class="button"><button type="button" class="btn btn-outline-danger">退出</button></li>
+                        </ul>
                   </div>
         </div><!-- /.container -->
     </div>
@@ -59,7 +59,7 @@
                             <h4>操作</h4>
                     </div>
                 </div>
-        </div>   
+        </div>
     </div>
 
     <div class="modal fade" id="update" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
@@ -70,7 +70,7 @@
                         <button type="button" class="close" data-dismiss="modal" aria-hidden="true">×</button>
                     </div>
                     <div class="modal-body">
-                        <form class="form-horizontal"  id="updateform" role="form">
+                        <form class="form-horizontal"  id="updateform" role="form" method="post" action="">
                             <div class="form-group">
                                 <label for="uname" class="col-sm-4 control-label">姓 名:</label>
                                 <div class="col-sm-8">
@@ -83,7 +83,7 @@
                                     <input type="text" id="uid" name="uid" class="form-control well" placeholder="请输入学号"/>
                                 </div>
                             </div>
-                            
+
                             <div class="form-group">
                                 <label for="uimage" class="col-sm-4 control-label">上传相片:</label>
                                     <div class="col-sm-8">
@@ -101,7 +101,7 @@
         </div>
     <!-- Optional JavaScript -->
     <!-- jQuery first, then Popper.js, then Bootstrap JS -->
-    
+
     <script>
     jQuery.validator.addMethod("checkPic", function(value, element){
         var filepath = value;
@@ -110,13 +110,13 @@
         var fileTArr=fileArr[fileArr.length-1].toLowerCase().split(".");
         var filetype=fileTArr[fileTArr.length-1];
         //切割出后缀文件名
-        if (filetype == "jpg" || filetype == "png") {
+        if (filetype === "jpg" || filetype === "png") {
             return true;
          }else{
             return false;
          }
-    }, "请选择正确的照片！")
-    $(document).ready(function () {
+    }, "请选择正确的照片！");
+    $().ready(function () {
         $('#updateform').validate({
             rules:{
                     uname: {
@@ -133,7 +133,7 @@
                     }
                 },
             messages:{
-                    uName:{
+                    uname:{
                         required: "请输入学生姓名"
                     },
                     uid:{
@@ -141,7 +141,7 @@
                     },
                     uimage:{
                         required: "请输入上传正确格式的相片"
-                        
+
                     }
             }
         });
@@ -163,7 +163,7 @@
                 console.log(res);
                 alert("ok");
                 location.reload();
-                
+
             },
             error: function(XMLHttpRequest, textStatus, errorThrown) {
                 alert("error");
@@ -173,10 +173,9 @@
             }
         })
     }
-  
+
     </script>
-    
-    
+
+
     </body>
     </html>
-    

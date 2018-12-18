@@ -18,11 +18,11 @@ public class StudentController {
     }
 
     //返回所有学生信息
-    @RequestMapping(value = "/showAllStudents", produces="application/json;charset=UTF-8")
-    public String showAllStudents(@RequestBody String jsonString){
-        JSONObject jsonObject = new JSONObject(jsonString);
-        return studentService.showAllStudents(jsonObject);
-    }
+//    @RequestMapping(value = "/showAllStudents", produces="application/json;charset=UTF-8")
+//    public String showAllStudents(@RequestBody String jsonString){
+//        JSONObject jsonObject = new JSONObject(jsonString);
+//        return studentService.showAllStudents(jsonObject);
+//    }
 
     @RequestMapping(value = "/update", produces="application/json;charset=UTF-8")
     public String updateStudent(@RequestBody String jsonString){
