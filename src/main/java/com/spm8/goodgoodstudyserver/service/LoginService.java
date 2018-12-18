@@ -1,5 +1,6 @@
 package com.spm8.goodgoodstudyserver.service;
 
+import com.spm8.goodgoodstudyserver.dao.AccountDB;
 import com.spm8.goodgoodstudyserver.dao.Impl.AccountDBImpl;
 import com.spm8.goodgoodstudyserver.dao.CourseDB;
 import com.spm8.goodgoodstudyserver.entities.*;
@@ -13,34 +14,36 @@ import java.util.List;
 
 @Service
 public class LoginService {
-    @Autowired
-    AccountDBImpl accountDB;
-    @Autowired
-    StringEncrypt encoder;
-    @Autowired
-    CourseDB courseDB;
+    private AccountDB accountDB;
+    private StringEncrypt encoder;
+    private CourseDB courseDB;
     //传入帐号与密码 传出JSON格式字符串以转发信息信息详情见接口文档
+    //使用构造器注入
+    @Autowired
+    public LoginService(AccountDB accountDB, StringEncrypt encoder, CourseDB courseDB){
+        this.accountDB = accountDB;
+        this.encoder = encoder;
+        this.courseDB = courseDB;
+    }
     public String checkAccount(String account,String pwd){
-        String tmp;
-        if(account==null||pwd==null)
-            tmp= "INPUT_DATA_ERROR";
+        String msgString;
         UserEntity user=accountDB.getAccountByUsername(account);
         if(user==null) {
-            tmp = "ACCOUNT_ERROR";
+            msgString = "ACCOUNT_ERROR";
         }
         else {
             String realPwd = encoder.DecodeString(user.getPassword());
             if (realPwd.equals(pwd)) {
-                tmp = "SUCCESS_TEACHER";
+                msgString = "SUCCESS_TEACHER";
                 if(user.getType().equals("ADMIN"))
-                    tmp="SUCCESS_ADMIN";
+                    msgString="SUCCESS_ADMIN";
             }
             else
-                tmp = "PASSWORD_ERROR";
+                msgString = "PASSWORD_ERROR";
         }
         JSONObject result=new JSONObject();
-        result.put("msg",tmp);
-        if(tmp.equals("SUCCESS_TEACHER")){
+        result.put("msg",msgString);
+        if(msgString.equals("SUCCESS_TEACHER")){
             result.put("realName",user.getUserRealName());
             result.put("teacherID",user.getUserId());
             List<CourseEntity>list=courseDB.getCourseListByTeacherID(user.getUserId());
