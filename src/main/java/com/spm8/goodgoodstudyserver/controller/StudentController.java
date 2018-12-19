@@ -1,7 +1,6 @@
 package com.spm8.goodgoodstudyserver.controller;
 
 import com.spm8.goodgoodstudyserver.service.StudentService;
-import org.json.JSONObject;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
