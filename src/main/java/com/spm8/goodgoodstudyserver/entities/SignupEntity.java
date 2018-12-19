@@ -15,6 +15,7 @@ public class SignupEntity {
     private Integer signupCnt;
 
     @Id
+    @GeneratedValue(strategy=GenerationType.AUTO)
     @Column(name = "SIGNUP_ID", nullable = false)
     public int getSignupId() {
         return signupId;

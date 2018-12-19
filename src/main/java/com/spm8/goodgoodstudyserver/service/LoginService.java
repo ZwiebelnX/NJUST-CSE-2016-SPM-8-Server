@@ -9,6 +9,7 @@ import org.json.JSONArray;
 import org.json.JSONObject;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.web.bind.annotation.RequestMapping;
 
 import java.util.List;
 
@@ -27,11 +28,15 @@ public class LoginService {
     }
     public String checkAccount(String account,String pwd){
         String msgString;
-        UserEntity user=accountDB.getAccountByUsername(account);
-        if(user==null) {
+        UserEntity user=new UserEntity();
+        if(account==null||pwd==null)
+            msgString= "INPUT_DATA_ERROR";
+        List<UserEntity>userEntityList=accountDB.getByUserName(account);
+        if(userEntityList.size()<1) {
             msgString = "ACCOUNT_ERROR";
         }
         else {
+            user=userEntityList.get(0);
             String realPwd = encoder.DecodeString(user.getPassword());
             if (realPwd.equals(pwd)) {
                 msgString = "SUCCESS_TEACHER";
@@ -46,11 +51,11 @@ public class LoginService {
         if(msgString.equals("SUCCESS_TEACHER")){
             result.put("realName",user.getUserRealName());
             result.put("teacherID",user.getUserId());
-            List<CourseEntity>list=courseDB.getCourseListByTeacherID(user.getUserId());
+            List<CourseEntity>list=courseDB.getCourseEntitiesByTeacherId(user.getUserId());
             JSONArray jsonArray=new JSONArray();
             for(CourseEntity courseEntity :list){
                 JSONObject object=new JSONObject();
-                object.put("courseID",courseEntity.getCourseId());
+                object.put("courseID",Integer.toString(courseEntity.getCourseId()));
                 object.put("courseName",courseEntity.getCourseName());
                 object.put("courseClassroom",courseEntity.getClassroom());
                 jsonArray.put(object);
@@ -58,12 +63,7 @@ public class LoginService {
             result.put("courseList",jsonArray);
         }
         String jsonString=result.toString();
-        System.out.println(jsonString);
+        //System.out.println(jsonString);
         return jsonString;
-    }
-    //用于测试数据库情况
-    public String Test(String s){
-        UserEntity user=accountDB.getAccountByUsername(s);
-        return user.getUserName()+";"+user.getCollege();
     }
 }

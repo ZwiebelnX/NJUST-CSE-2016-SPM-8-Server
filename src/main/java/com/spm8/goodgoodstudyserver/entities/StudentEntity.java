@@ -11,6 +11,7 @@ public class StudentEntity {
     private String faceToken;
 
     @Id
+    @GeneratedValue(strategy=GenerationType.AUTO)
     @Column(name = "STUDENT_ID", nullable = false, length = 255)
     public String getStudentId() {
         return studentId;
