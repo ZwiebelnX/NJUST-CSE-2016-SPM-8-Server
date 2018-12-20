@@ -7,29 +7,20 @@ import java.io.*;
 import java.net.HttpURLConnection;
 import java.net.URL;
 import java.net.URLEncoder;
-import java.util.HashMap;
-import java.util.Iterator;
-import java.util.Map;
-import java.util.Random;
+import java.util.*;
 
-public class FaceUtil {//用来返回face_token；
-    static String url = "https://api-cn.faceplusplus.com/facepp/v3/detect";
-    public static String checkFace(String imgString) throws IOException {
-        byte[] buff = getStringImage(imgString.substring(imgString.indexOf(",")+1));
-        return check( buff);
-    }
-
-    public static String check(byte[] buff) {
+public class PostUtil {
+    //用来返回对比两个face_token的调用
+    static String url = "https://api-cn.faceplusplus.com/facepp/v3/compare";
+    public static String compare(String token1,String token2){
         HashMap<String, String> map = new HashMap<>();
-        HashMap<String, byte[]> byteMap = new HashMap<>();
         map.put("api_key", "_WbTER4zNul6ANRxxupYZNtl6pNw8cQC");
         map.put("api_secret", "jEJ_oR0HjmEhkM5nEWYsWx_YfOKn7uNb");
-        map.put("return_landmark", "1");
-        map.put("return_attributes", "gender,age,smiling,headpose,facequality,blur,eyestatus,emotion,ethnicity,beauty,mouthstatus,eyegaze,skinstatus");
-        byteMap.put("image_file", buff);
+        map.put("face_token1", token1);
+        map.put("face_token2",token2);
         String str =null;
         try{
-            byte[] bacd = post(url, map, byteMap);
+            byte[] bacd = post(url, map);
             str = new String(bacd);
             System.out.println(str);
         }catch (Exception e) {
@@ -53,7 +44,7 @@ public class FaceUtil {//用来返回face_token；
     private final static int CONNECT_TIME_OUT = 30000;
     private final static int READ_OUT_TIME = 50000;
     private static String boundaryString = getBoundary();
-    protected static byte[] post(String url, HashMap<String, String> map, HashMap<String, byte[]> fileMap) throws Exception {
+    protected static byte[] post(String url, HashMap<String, String> map) throws Exception {
         HttpURLConnection conne;
         URL url1 = new URL(url);
         conne = (HttpURLConnection) url1.openConnection();
@@ -77,18 +68,6 @@ public class FaceUtil {//用来返回face_token；
                     + "\"\r\n");
             obos.writeBytes("\r\n");
             obos.writeBytes(value + "\r\n");
-        }
-        if(fileMap != null && fileMap.size() > 0){
-            Iterator fileIter = fileMap.entrySet().iterator();
-            while(fileIter.hasNext()){
-                Map.Entry<String, byte[]> fileEntry = (Map.Entry<String, byte[]>) fileIter.next();
-                obos.writeBytes("--" + boundaryString + "\r\n");
-                obos.writeBytes("Content-Disposition: form-data; name=\"" + fileEntry.getKey()
-                        + "\"; filename=\"" + encode(" ") + "\"\r\n");
-                obos.writeBytes("\r\n");
-                obos.write(fileEntry.getValue());
-                obos.writeBytes("\r\n");
-            }
         }
         obos.writeBytes("--" + boundaryString + "--" + "\r\n");
         obos.writeBytes("\r\n");

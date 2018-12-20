@@ -31,6 +31,8 @@ public class SignService {
     CourseDB courseDB;
     @Autowired
     StudentDB studentDB;
+    @Autowired
+    FaceService faceService;
     //将字符串转换成二进制流
     public byte[] convertStringToByte(String s){
         if(s==null)return null;
@@ -67,11 +69,16 @@ public class SignService {
             if(signType.equals("SIGN")){
                 maxCnt+=1;
             }
-            //TODO 输入学生列表和图片 返回跷课的学生列表 填入了这堂课全部的学生列表和img图片
             CourseEntity course=courseEntityList.get(0);
             course.setSignupCount(Integer.toString(maxCnt));
             courseDB.save(course);
-            //List<StudentEntity>result=faceService.sign(studentlist,img);
+            try {
+                List<StudentEntity> result = faceService.doSignStudent(studentlist, img);
+            }catch (Exception e){
+                msg="SERVER_ERROR";
+                jsonObject.put("msg",msg);
+                return jsonObject.toString();
+            }
             List<StudentEntity>result=studentlist;
             Timestamp current_time= new Timestamp(System.currentTimeMillis());
             Map<String,Integer> map=new HashMap<String, Integer>();

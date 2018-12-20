@@ -15,6 +15,7 @@ public class CheckEntity {
     private Integer checkCnt;
 
     @Id
+    @GeneratedValue(strategy=GenerationType.AUTO)
     @Column(name = "CHECK_ID", nullable = false)
     public int getCheckId() {
         return checkId;
