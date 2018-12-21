@@ -24,12 +24,12 @@ public class FaceRegController {
     FaceRegController(FaceService faceService) {
         this.faceService=faceService;
     }
-    //录入脸
-    @RequestMapping(value = "userenter.face",produces="application/json;charset=UTF-8")
-    public String doUserFaceEnter(MultipartHttpServletRequest request) {
-            String name=request.getParameter("uname");
-            String id=request.getParameter("uid");
-            MultipartFile file=request.getFile("uimage");
-            return faceService.doFaceEnter(file,id,name);
-    }
+    //本段代码已移动至StudentController
+//    @RequestMapping(value = "userenter.face",produces="application/json;charset=UTF-8")
+//    public String doUserFaceEnter(MultipartHttpServletRequest request) {
+//            String name=request.getParameter("uname");
+//            String id=request.getParameter("uid");
+//            MultipartFile file=request.getFile("uimage");
+//            return faceService.doFaceEnter(file,id,name);
+//    }
 }

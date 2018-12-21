@@ -53,7 +53,7 @@ public class FaceService {
             user.setStudentName(name);
             user.setStudentId(id);
             user.setFaceToken(faceToken);
-            studentDB.save(user);
+            studentDB.save(user); //TODO 数据库写入存在问题
             List<StudentEntity> students = studentDB.getALL();
             int count=students.size()-1;
             AddFaceUtil.add(faceToken,name);

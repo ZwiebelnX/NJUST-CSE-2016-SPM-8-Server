@@ -18,52 +18,57 @@ public class LoginService {
     private AccountDB accountDB;
     private StringEncrypt encoder;
     private CourseDB courseDB;
+
     //传入帐号与密码 传出JSON格式字符串以转发信息信息详情见接口文档
     //使用构造器注入
     @Autowired
-    public LoginService(AccountDB accountDB, StringEncrypt encoder, CourseDB courseDB){
+    public LoginService(AccountDB accountDB, StringEncrypt encoder, CourseDB courseDB) {
         this.accountDB = accountDB;
         this.encoder = encoder;
         this.courseDB = courseDB;
     }
-    public String checkAccount(String account,String pwd){
+
+    public String checkAccount(String account, String pwd) {
         String msgString;
-        UserEntity user=new UserEntity();
-        if(account==null||pwd==null)
-            msgString= "INPUT_DATA_ERROR";
-        List<UserEntity>userEntityList=accountDB.getByUserName(account);
-        if(userEntityList.size()<1) {
+        UserEntity user = new UserEntity();
+        if (account == null || pwd == null)
+            msgString = "INPUT_DATA_ERROR";
+        List<UserEntity> userEntityList = accountDB.getByUserName(account);
+        if (userEntityList.size() < 1) {
             msgString = "ACCOUNT_ERROR";
-        }
-        else {
-            user=userEntityList.get(0);
+        } else {
+            user = userEntityList.get(0);
             String realPwd = encoder.DecodeString(user.getPassword());
             if (realPwd.equals(pwd)) {
                 msgString = "SUCCESS_TEACHER";
-                if(user.getType().equals("ADMIN"))
-                    msgString="SUCCESS_ADMIN";
-            }
-            else
+                if (user.getType().equals("ADMIN"))
+                    msgString = "SUCCESS_ADMIN";
+            } else
                 msgString = "PASSWORD_ERROR";
         }
-        JSONObject result=new JSONObject();
-        result.put("msg",msgString);
-        if(msgString.equals("SUCCESS_TEACHER")){
-            result.put("realName",user.getUserRealName());
-            result.put("teacherID",user.getUserId());
-            List<CourseEntity>list=courseDB.getCourseEntitiesByTeacherId(user.getUserId());
-            JSONArray jsonArray=new JSONArray();
-            for(CourseEntity courseEntity :list){
-                JSONObject object=new JSONObject();
-                object.put("courseID",Integer.toString(courseEntity.getCourseId()));
-                object.put("courseName",courseEntity.getCourseName());
-                object.put("courseClassroom",courseEntity.getClassroom());
+        JSONObject result = new JSONObject();
+        result.put("msg", msgString);
+        if (msgString.equals("SUCCESS_TEACHER")) {
+            result.put("realName", user.getUserRealName());
+            result.put("teacherID", user.getUserId());
+            result.put("userType", user.getType()); //加入用户类别 以便网页端调用
+            List<CourseEntity> list = courseDB.getCourseEntitiesByTeacherId(user.getUserId());
+            JSONArray jsonArray = new JSONArray();
+            for (CourseEntity courseEntity : list) {
+                JSONObject object = new JSONObject();
+                object.put("courseID", Integer.toString(courseEntity.getCourseId()));
+                object.put("courseName", courseEntity.getCourseName());
+                object.put("courseClassroom", courseEntity.getClassroom());
                 jsonArray.put(object);
             }
-            result.put("courseList",jsonArray);
+            result.put("courseList", jsonArray);
         }
-        String jsonString=result.toString();
-        //System.out.println(jsonString);
-        return jsonString;
+        //TODO 网页端登录 写入文档
+        if (msgString.equals("SUCCESS_ADMIN")) {
+            result.put("realName", user.getUserRealName());
+            result.put("adminID", user.getUserId());
+            result.put("userType", user.getType());
+        }
+        return result.toString();
     }
 }

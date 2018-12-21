@@ -108,6 +108,30 @@
 <!-- jQuery first, then Popper.js, then Bootstrap JS -->
 
 <script>
+    //TODO 远端验证ID有效性
+    $.ready(function () {
+        //TODO 本处验证无效
+        if (sessionStorage.getItem("userType") === null) {
+            alert("请先登录！");
+            window.location.replace("/login.html")
+        } else {
+            let json = {
+                userID: sessionStorage.getItem("userID")
+            };
+            $.ajax({
+                type: "POST",
+                url: "/students/showAllStudent",
+                contentType: "application/json; charset=utf-8",
+                data: JSON.stringify(json),
+                success: function (res) {
+                    //TODO 显示学生列表
+                },
+                error: function (res) {
+
+                }
+            })
+        }
+    });
     //表单验证
     jQuery.validator.addMethod("checkPic", function (value, element) {
         //获得上传文件名
@@ -148,22 +172,24 @@
         });
     });
     //提交表单操作
+    //TODO 提交图片
     function update() {
         if (!$("#updateform").valid()) {
             return false;
         }
-        let updateJson = {
-            "id": $('#uid').val(),
-            "name": $('#uname').val()
-        };
-        console.log(updateJson);
-        console.log(JSON.stringify(updateJson));
+        let formData = new FormData();
+        formData.append("studentName", $("#uname").val());
+        formData.append("studentID", $("#uid").val());
+        formData.append("studentFaceImage", $("#uimage")[0].files[0]);
         $.ajax({
             type: "POST",
-            url: "/student/update",
-            contentType: "application/json; charset=utf-8",
-            data: JSON.stringify(updateJson),
-            dataType: "json",
+            url: "student/update",
+            //contentType: "application/json; charset=utf-8",
+            data: formData,
+            async: false,
+            cache: false,
+            contentType: false,
+            processData: false,
             success: function (res) {
                 console.log(res);
                 alert("ok");
