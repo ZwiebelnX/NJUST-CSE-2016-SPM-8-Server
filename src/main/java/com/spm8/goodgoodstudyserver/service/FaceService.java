@@ -31,7 +31,7 @@ public class FaceService {
     public String doFaceEnter(MultipartFile file, String id, String name){
         if(file == null || "".equals(file.getOriginalFilename())) {
             JSONObject jsonObject = new JSONObject();
-            jsonObject.put("msg",  "INPUTDATA_ERROR");
+            jsonObject.put("msg",  "INPUT_DATA_ERROR");
             System.out.println("上传照片为空");
             return jsonObject.toString();
         }
@@ -42,7 +42,7 @@ public class FaceService {
             JSONArray faces = json.getJSONArray("faces");
             if("[]".equals(faces)) {
                 JSONObject jsonObject = new JSONObject();
-                jsonObject.put("msg",  "INPUTDATA_BAD");//输入照片质量过差
+                jsonObject.put("msg",  "INPUT_DATA_BAD");//输入照片质量过差
                 System.out.print("重新上传");
                 return jsonObject.toString();
             }
@@ -78,32 +78,29 @@ public class FaceService {
         try {
             JSONArray faces = json.getJSONArray("faces");
             System.out.print("总人数为："+faces.length());
-            for(int i=0;i<students.size();i++){
-                String datatoken=students.get(i).getFaceToken();
-                String id=students.get(i).getStudentId();
-                boolean flag=true;
-                for(int j=0;j<faces.length();j++) {
+            for (StudentEntity student : students) {
+                String dataToken = student.getFaceToken();
+                String id = student.getStudentId();
+                boolean flag = true;
+                for (int j = 0; j < faces.length(); j++) {
                     JSONObject josnToken = faces.getJSONObject(j);
                     String faceToken = josnToken.getString("face_token");
-                    String s= PostUtil.compare(datatoken,faceToken);
-                    JSONObject comp= new JSONObject(s);
-                    Float confidence = comp.getFloat("confidence");
+                    String s = PostUtil.compare(dataToken, faceToken);
+                    JSONObject comp = new JSONObject(s);
+                    float confidence = comp.getFloat("confidence");
                     System.out.println("置信度为" + confidence);
                     JSONObject thresholdsJson = comp.getJSONObject("thresholds");
-                    Float e5 = thresholdsJson.getFloat("1e-5");
+                    float e5 = thresholdsJson.getFloat("1e-5");
                     System.out.println("误识率为十万分之一的置信度阈值为：" + e5);
-                    if (Double.valueOf(confidence) >= Double.valueOf(e5)) {
+                    if ((double) confidence >= (double) e5) {
                         //更新数据库的签到数据以及到课学生数量更新+1
-                        System.out.println("第"+id+"人极度相似，登录成功！");
-                        flag=false;
+                        System.out.println("第" + id + "人极度相似，登录成功！");
+                        flag = false;
                         break;
-                    } else {
-                        continue;
                     }
-
                 }
-                if(flag){
-                    escapeList.add(students.get(i));
+                if (flag) {
+                    escapeList.add(student);
                 }
             }
             //总到课人数加入数据库
@@ -139,7 +136,7 @@ public class FaceService {
                 checkDB.save(checkEntity);
                 json.put("checkCNT",checkCNT);
             }else{
-                json.put("msg","INPUTDATA_ERROR");
+                json.put("msg","INPUT_DATA_ERROR");
             }
         } catch (Exception e) {
             e.printStackTrace();

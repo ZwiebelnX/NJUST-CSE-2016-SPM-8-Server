@@ -9,17 +9,22 @@ import org.springframework.web.multipart.MultipartHttpServletRequest;
 
 @RestController
 public class CheckController {
-    private FaceService faceService;
+    private final FaceService faceService;
+
     @Autowired
     CheckController(FaceService faceService) {
-        this.faceService=faceService;
+        this.faceService = faceService;
     }
-    @RequestMapping(value = "status.check",produces="application/json;charset=UTF-8")
-    public  String doCheck(MultipartHttpServletRequest request){
-        String courseID=request.getParameter("courseID");
-        String type=request.getParameter("type");
-        MultipartFile file=request.getFile("img");
-        String checkCNT=request.getParameter("checkCNT");
-        return faceService.doCheckStatus(file,courseID,type,checkCNT);
+
+    //检查学生上课状态
+    @RequestMapping(value = "status.check", produces = "application/json;charset=UTF-8")
+    public String doCheck(MultipartHttpServletRequest request) {
+        String courseID = request.getParameter("courseID");
+        String type = request.getParameter("type");
+        MultipartFile file = request.getFile("img");
+        String checkCNT = request.getParameter("checkCNT");
+        return faceService.doCheckStatus(file, courseID, type, checkCNT);
     }
+
+
 }

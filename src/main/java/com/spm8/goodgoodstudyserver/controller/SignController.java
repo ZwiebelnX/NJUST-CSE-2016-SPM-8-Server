@@ -16,43 +16,49 @@ import org.springframework.web.multipart.MultipartHttpServletRequest;
 import java.util.ArrayList;
 import java.util.List;
 
+//发起签到的控制器
 @RestController
 public class SignController {
+    private final SignService signService;
+
     @Autowired
-    SignService signService;
-    //发起签到的控制器
-    @RequestMapping(value = "sign.sign", produces="application/json;charset=UTF-8")//设置返回头为json
-    @ResponseBody
-    public String doSign(MultipartHttpServletRequest request){
-        String courseid="",signType="",imgStr="";
-        courseid=request.getParameter("courseID");
-        signType=request.getParameter("signType");
-        MultipartFile imgfile=request.getFile("img");
-        return signService.doSignin(courseid,signType,imgfile);
+    public SignController(SignService signService) {
+        this.signService = signService;
     }
-    @RequestMapping(value = "resign.sign", produces="application/json;charset=UTF-8")//设置返回头为json
+
+    @RequestMapping(value = "sign.sign", produces = "application/json;charset=UTF-8")//设置返回头为json
+    @ResponseBody
+    public String doSign(MultipartHttpServletRequest request) {
+        String courseid = "", signType = "", imgStr = "";
+        courseid = request.getParameter("courseID");
+        signType = request.getParameter("signType");
+        MultipartFile imgFile = request.getFile("img");
+        return signService.doSignin(courseid, signType, imgFile);
+    }
+
+    @RequestMapping(value = "resign.sign", produces = "application/json;charset=UTF-8")//设置返回头为json
     @ResponseBody
     public String doResign(@RequestBody String s) {
-        String signCnt="0";
-        String courseid="";
-        List<StudentEntity>studentlist=new ArrayList<>();
-        try{
+        String signCnt = "0";
+        String courseid = "";
+        List<StudentEntity> studentList = new ArrayList<>();
+        try {
             JSONObject myJsonObject = new JSONObject(s);
-            signCnt=myJsonObject.getString("signCnt");
-            courseid=myJsonObject.getString("courseID");
-            JSONArray array=myJsonObject.getJSONArray("resignList");
-            for(int i=0;i<array.length();i++){
-                JSONObject object=array.getJSONObject(i);
-                StudentEntity temp=new StudentEntity();
-                String name=object.getString("studentName");
-                String studentid=object.getString("studentID");
+            signCnt = myJsonObject.getString("signCnt");
+            courseid = myJsonObject.getString("courseID");
+            JSONArray array = myJsonObject.getJSONArray("resignList");
+            for (int i = 0; i < array.length(); i++) {
+                JSONObject object = array.getJSONObject(i);
+                StudentEntity temp = new StudentEntity();
+                String name = object.getString("studentName");
+                String studentID = object.getString("studentID");
                 temp.setStudentName(name);
-                temp.setStudentId(studentid);
-                studentlist.add(temp);
+                temp.setStudentId(studentID);
+                studentList.add(temp);
             }
-        } catch (JSONException e){
+        } catch (JSONException e) {
             e.printStackTrace();
         }
-        return signService.doResignin(signCnt,courseid,studentlist);
+        return signService.doResignin(signCnt, courseid, studentList);
     }
 }

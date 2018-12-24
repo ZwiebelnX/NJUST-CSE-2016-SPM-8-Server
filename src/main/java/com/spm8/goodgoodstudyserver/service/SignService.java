@@ -25,14 +25,19 @@ import java.util.zip.GZIPInputStream;
 
 @Service
 public class SignService {
+    private final SignUpDB signUpDB;
+    private final CourseDB courseDB;
+    private final StudentDB studentDB;
+    private final FaceService faceService;
+
     @Autowired
-    SignUpDB signUpDB;
-    @Autowired
-    CourseDB courseDB;
-    @Autowired
-    StudentDB studentDB;
-    @Autowired
-    FaceService faceService;
+    public SignService(CourseDB courseDB, StudentDB studentDB, FaceService faceService, SignUpDB signUpDB) {
+        this.courseDB = courseDB;
+        this.studentDB = studentDB;
+        this.faceService = faceService;
+        this.signUpDB = signUpDB;
+    }
+
     //将字符串转换成二进制流
     public byte[] convertStringToByte(String s){
         if(s==null)return null;
@@ -51,6 +56,7 @@ public class SignService {
         }
         return null;
     }
+
     //具体实现签到
     public String doSignin(String courseID, String signType, MultipartFile img){
         List<String>signedlist=courseDB.getCourseSignCnt(Integer.valueOf(courseID));
@@ -79,13 +85,12 @@ public class SignService {
                 jsonObject.put("msg",msg);
                 return jsonObject.toString();
             }
-            List<StudentEntity>result=studentlist;
             Timestamp current_time= new Timestamp(System.currentTimeMillis());
             Map<String,Integer> map=new HashMap<String, Integer>();
             for(StudentEntity a:studentlist){
                 map.put(a.getStudentId(),1);//表示签到了
             }
-            for(StudentEntity a:result){
+            for(StudentEntity a: studentlist){
                 map.put(a.getStudentId(),2);//表示旷课了
             }
             if(signType.equals("RESIGN")) {//重签
@@ -111,7 +116,7 @@ public class SignService {
                 }
             }
             JSONArray escaspelist=new JSONArray();
-            for(StudentEntity a:result){
+            for(StudentEntity a: studentlist){
                 JSONObject tmp=new JSONObject();
                 tmp.put("studentName",a.getStudentName());
                 tmp.put("studentID",a.getStudentId());

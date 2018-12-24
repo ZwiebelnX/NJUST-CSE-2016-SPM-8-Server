@@ -16,16 +16,21 @@ import java.util.List;
 
 @RestController
 public class TestController {
+    private final StringEncrypt encoder;
+    private final LoginService loginservice;
+    private final StudentDB studentDB;
+    private final SignService signService;
+    private final AccountDB accountDB;
+
     @Autowired
-    StringEncrypt encoder;
-    @Autowired
-    private LoginService loginservice;
-    @Autowired
-    private StudentDB studentDB;
-    @Autowired
-    private SignService signService;
-    @Autowired
-    private AccountDB accountDB;
+    public TestController(StringEncrypt encoder, LoginService loginservice, StudentDB studentDB, SignService signService, AccountDB accountDB) {
+        this.encoder = encoder;
+        this.loginservice = loginservice;
+        this.studentDB = studentDB;
+        this.signService = signService;
+        this.accountDB = accountDB;
+    }
+
     @RequestMapping(value="encode.test")
     public String doencodetest() {
         return encoder.EncodeString("cse2016");

@@ -40,13 +40,13 @@
             </ul>
             <ul class="nav navbar-nav navbar-right ">
                 <li class="button">
-                    <button type="button" class="btn btn-outline-danger">退出</button>
+                    <button type="button" class="btn btn-outline-danger" onclick="signOut()">退出</button>
                 </li>
             </ul>
         </div>
     </div><!-- /.container -->
 </div>
-<div class="container">
+<div class="container" id="info-container">
     <div class="row clearfix" style="margin-top:30px;">
         <div class="col-md-9 column"></div>
         <div class="col-md-3 column">
@@ -109,22 +109,23 @@
 
 <script>
     //TODO 远端验证ID有效性
-    $.ready(function () {
-        //TODO 本处验证无效
+    $(function () {
         if (sessionStorage.getItem("userType") === null) {
             alert("请先登录！");
-            window.location.replace("/login.html")
+            signOut();
         } else {
             let json = {
-                userID: sessionStorage.getItem("userID")
+                userType: sessionStorage.getItem("userType")
             };
             $.ajax({
                 type: "POST",
-                url: "/students/showAllStudent",
+                url: "/student/showAllStudents",
                 contentType: "application/json; charset=utf-8",
                 data: JSON.stringify(json),
                 success: function (res) {
                     //TODO 显示学生列表
+                    console.log(res);
+                    showAllStudent(res)
                 },
                 error: function (res) {
 
@@ -132,6 +133,22 @@
             })
         }
     });
+
+    //退出登录操作
+    function signOut(){
+        sessionStorage.removeItem("userType");
+        sessionStorage.removeItem("teacherID");
+        sessionStorage.removeItem("adminID");
+        window.location.replace("/login.html");
+    }
+
+    //显示学生信息
+    function showAllStudent(res){
+        $.each(res.studentsInfo, function () {
+
+        })
+    }
+
     //表单验证
     jQuery.validator.addMethod("checkPic", function (value, element) {
         //获得上传文件名
