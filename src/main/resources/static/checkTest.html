@@ -4,28 +4,28 @@
     <meta charset="utf-8">
     <title>假装这是检测页面</title>
     <style>
-        video,canvas{
-            border:1px solid gray;
-            width:400px;
-            height:400px;
-            border-radius:50%;
+        video, canvas {
+            border: 1px solid gray;
+            width: 400px;
+            height: 400px;
+            border-radius: 50%;
         }
     </style>
 </head>
 <body>
-<form id="pic" action="/User/picture"  enctype="multipart/form-data">
+<form id="pic" action="/User/picture" enctype="multipart/form-data">
     <input type="text" id="name" style="position:  absolute;left: 30%;top: 15%" placeholder="请填入您的账号">
-    <input type="file" name="file"  style="position: absolute;left: 30%;top: 35%" >
+    <input type="file" name="file" style="position: absolute;left: 30%;top: 35%">
     <button type="button" style="position: absolute;left: 30%;top: 45%" onclick="uploadPic()">图片上传</button>
 </form>
 <!-- <button id="capture" style="position: absolute;left: 30%;top: 25%">拍照上传</button> -->
 
 <script src="http://code.jquery.com/jquery-latest.js"></script>
 <script type="text/javascript">
-    function uploadPic(){
-        var formData = new FormData($( "#pic" )[0]);
+    function uploadPic() {
+        var formData = new FormData($("#pic")[0]);
         $.ajax({
-            url: '/User/reg' ,  /*这是处理文件上传的servlet*/
+            url: '/User/reg',  /*这是处理文件上传的servlet*/
             type: 'POST',
             data: formData,
             async: false,
@@ -41,10 +41,6 @@
             }
         });
     }
-
-
-
-
 
 
     // function hasUserMedia(){//判断是否支持调用设备api，因为浏览器不同所以判断方式不同哦

@@ -35,7 +35,6 @@ public class StudentController {
         String studentName=request.getParameter("studentName");
         String studentID=request.getParameter("studentID");
         MultipartFile studentFaceImage=request.getFile("studentFaceImage");
-        //TODO 数据库写入存在问题
         return faceService.doFaceEnter(studentFaceImage,studentID,studentName);
     }
 }
