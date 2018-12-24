@@ -39,6 +39,9 @@
                 </li>
             </ul>
             <ul class="nav navbar-nav navbar-right ">
+                <li class="text" id="userName">
+
+                </li>
                 <li class="button">
                     <button type="button" class="btn btn-outline-danger" onclick="signOut()">退出</button>
                 </li>
@@ -64,7 +67,6 @@
             <h4>操作</h4>
         </div>
     </div>
-    <!-- TODO 列表动态生成 -->
 </div>
 
 <div class="modal fade" id="update" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
@@ -114,6 +116,7 @@
             alert("请先登录！");
             signOut();
         } else {
+            $("#userName").text("您好！" + sessionStorage.getItem("userName"));
             let json = {
                 userType: sessionStorage.getItem("userType")
             };
@@ -123,7 +126,6 @@
                 contentType: "application/json; charset=utf-8",
                 data: JSON.stringify(json),
                 success: function (res) {
-                    //TODO 显示学生列表
                     console.log(res);
                     showAllStudent(res)
                 },
@@ -142,10 +144,36 @@
         window.location.replace("/login.html");
     }
 
-    //显示学生信息
+    //对DOM进行操作 显示学生信息
     function showAllStudent(res){
-        $.each(res.studentsInfo, function () {
-
+        let container = $("#info-container");
+        $.each(res.studentsInfo, function (index, obj) {
+            //行元素
+            let row = $("<div></div>");
+            row.attr("class", "row clearfix");
+            row.attr("style", "margin-top:5px;");
+            //名称列元素
+            let nameCol = $("<div></div>");
+            nameCol.attr("class", "col-md-3 column");
+            nameCol.text(obj.studentName);
+            row.append(nameCol);
+            //ID列元素
+            let IDCol = $("<div></div>");
+            IDCol.attr("class", "col-md-6 column");
+            IDCol.text(obj.studentID);
+            row.append(IDCol);
+            //操作列元素
+            let instCol = $("<div></div>");
+            instCol.attr("class", "col-md-3 column");
+            //操作中的按钮
+            let deleteBtn = $("<button></button>");
+            deleteBtn.attr("type", "button");
+            deleteBtn.attr("class", "btn btn-outline-danger");
+            deleteBtn.text("删除");
+            instCol.append(deleteBtn);
+            row.append(instCol);
+            //添加至info-container元素
+            container.append(row)
         })
     }
 
