@@ -1,9 +1,13 @@
 package com.spm8.goodgoodstudyserver.service;
 
+import com.fasterxml.jackson.databind.util.JSONPObject;
+import com.mysql.cj.xdevapi.JsonArray;
 import com.spm8.goodgoodstudyserver.dao.AccountDB;
 import com.spm8.goodgoodstudyserver.dao.CheckDB;
+import com.spm8.goodgoodstudyserver.dao.CourseDB;
 import com.spm8.goodgoodstudyserver.dao.StudentDB;
 import com.spm8.goodgoodstudyserver.entities.CheckEntity;
+import com.spm8.goodgoodstudyserver.entities.CourseEntity;
 import com.spm8.goodgoodstudyserver.entities.StudentEntity;
 import com.spm8.goodgoodstudyserver.util.AddFaceUtil;
 import com.spm8.goodgoodstudyserver.util.FaceUtil;
@@ -20,12 +24,14 @@ import java.util.List;
 
 @Service
 public class FaceService {
-    private StudentDB studentDB;
-    private CheckDB checkDB;
+    final  private StudentDB studentDB;
+    final private CheckDB checkDB;
+    final private CourseDB courseDB;
     @Autowired
-    FaceService(StudentDB studentDB,CheckDB checkDB){
+    FaceService(StudentDB studentDB,CheckDB checkDB,CourseDB courseDB){
         this.studentDB=studentDB;
         this.checkDB=checkDB;
+        this.courseDB=courseDB;
     }
     //录入人脸
     public String doFaceEnter(MultipartFile file, String id, String name){
@@ -58,7 +64,6 @@ public class FaceService {
             int count=students.size()-1;
             AddFaceUtil.add(faceToken,name);
         } catch (Exception e) {
-            // TODO: handle exception
             e.printStackTrace();
             JSONObject jsonObject = new JSONObject();
             jsonObject.put("msg",  "SERVER_ERROR");//系统繁忙
@@ -71,16 +76,16 @@ public class FaceService {
         return jsonObject.toString();
     }
     //处理统计事物
-    public List<StudentEntity>doSignStudent(List<StudentEntity>students,MultipartFile file)throws Exception{
+    public List<StudentEntity>doSignStudent(List<StudentEntity>students,MultipartFile file){
         List<StudentEntity>escapeList=new ArrayList<>();
-        String str = FaceUtil.check(file.getBytes());
-        JSONObject json =new JSONObject(str);
         try {
+            String str = FaceUtil.check(file.getBytes());
+            JSONObject json =new JSONObject(str);
             JSONArray faces = json.getJSONArray("faces");
             System.out.print("总人数为："+faces.length());
             for (StudentEntity student : students) {
                 String dataToken = student.getFaceToken();
-                String id = student.getStudentId();
+                String id = student.getStudentName();
                 boolean flag = true;
                 for (int j = 0; j < faces.length(); j++) {
                     JSONObject josnToken = faces.getJSONObject(j);
@@ -94,13 +99,15 @@ public class FaceService {
                     System.out.println("误识率为十万分之一的置信度阈值为：" + e5);
                     if ((double) confidence >= (double) e5) {
                         //更新数据库的签到数据以及到课学生数量更新+1
-                        System.out.println("第" + id + "人极度相似，登录成功！");
+                        System.out.println( id + "极度相似，登录成功！");
                         flag = false;
                         break;
                     }
+                    if(flag==false)break;
                 }
                 if (flag) {
                     escapeList.add(student);
+                    System.out.println("学生"+student.getStudentName()+"跷课");
                 }
             }
             //总到课人数加入数据库
@@ -112,31 +119,57 @@ public class FaceService {
     }
     //检查状态
     public String doCheckStatus(MultipartFile file,String courseID,String type,String checkCNT){
+        String str="";
+        JSONObject result=new JSONObject();
+        List<Integer> checklist=courseDB.getCourseCheckCnt(Integer.valueOf(courseID));
+        if(checklist==null){
+            JSONObject jsonObject = new JSONObject();
+            jsonObject.put("msg",  "SERVER_ERROR");
+            return jsonObject.toString();
+        }
+        int maxCNT=checklist.get(0);
+        if(file==null){
+            JSONObject jsonObject = new JSONObject();
+            jsonObject.put("msg",  "CLIENT_DATA_ERROR");
+            return jsonObject.toString();
+        }
+        try{
+            str= FaceUtil.check(file.getBytes());
+        }catch (Exception ex){
+            ex.printStackTrace();
+            JSONObject jsonObject = new JSONObject();
+            jsonObject.put("msg",  "CLIENT_DATA_ERROR");
+            return jsonObject.toString();
+        }
         try {
-            String str = FaceUtil.check(file.getBytes());
             JSONObject json =new JSONObject(str);
             JSONArray faces = json.getJSONArray("faces");
             System.out.print("总人数为："+faces.length());
             //获取上课的总人数，目前能监测到的人脸数量为faces.length(),减一下，不好好听课的同学数量返回到数据库。
             int allStudent=studentDB.getStudentByCourseID(Integer.valueOf(courseID)).size();
             int escaped=allStudent-faces.length();
-            double percent=escaped*1.0/allStudent;
+            double percent=escaped*100.0/allStudent;
             CheckEntity checkEntity=new CheckEntity();
             checkEntity.setAlivePercent(Double.toString(percent));
             checkEntity.setCourseId(Integer.parseInt(courseID));
             Timestamp current_time= new Timestamp(System.currentTimeMillis());
             checkEntity.setCheckTime(current_time);
-            json.put("result",Double.toString(percent));
+            result.put("result",Double.toString(percent));
             if(type.equals("FIRST_CHECK")){
-                checkEntity.setCheckCnt(1);
+                checkEntity.setCheckCnt(maxCNT+1);
                 checkDB.save(checkEntity);
-                json.put("checkCNT","1");
+                String temp=Integer.toString(maxCNT+1);
+                result.put("checkCNT",temp);
+                List<CourseEntity>list=courseDB.getCourseEntitiesByCourseId(Integer.valueOf(courseID));
+                CourseEntity temp_2=list.get(0);
+                temp_2.setCheckCount(maxCNT+1);
+                courseDB.save(temp_2);
             }else if(type.equals("RECHECK ")){
                 checkEntity.setCheckCnt(Integer.parseInt(checkCNT));
                 checkDB.save(checkEntity);
-                json.put("checkCNT",checkCNT);
+                result.put("checkCNT",checkCNT);
             }else{
-                json.put("msg","INPUT_DATA_ERROR");
+                result.put("msg","INPUT_DATA_ERROR");
             }
         } catch (Exception e) {
             e.printStackTrace();
@@ -144,9 +177,8 @@ public class FaceService {
             jsonObject.put("msg",  "SERVER_ERROR");
             return jsonObject.toString();
         }
-        JSONObject jsonObject = new JSONObject();
-        jsonObject.put("msg",  "SUCCESS");
+        result.put("msg",  "SUCCESS");
         System.out.print("成功");
-        return jsonObject.toString();
+        return result.toString();
     }
 }

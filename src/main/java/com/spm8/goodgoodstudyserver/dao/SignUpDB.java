@@ -11,5 +11,5 @@ import java.util.List;
 public interface SignUpDB extends CrudRepository<SignupEntity,Integer> {
     //使用courseid和signcnt来查询已有的签到记录
     @Query("select p from SignupEntity p where p.courseId=:courseID AND p.signupCnt=:signupCNT")
-    List<SignupEntity> getSignupListBycouseIDAndSignupCNT(@Param("courseID") String courseID,@Param("signupCNT") String signupCNT);
+    List<SignupEntity> getSignupListBycouseIDAndSignupCNT(@Param("courseID") int courseID,@Param("signupCNT") int signupCNT);
 }

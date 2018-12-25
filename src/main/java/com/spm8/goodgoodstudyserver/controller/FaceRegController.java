@@ -16,7 +16,7 @@ import org.springframework.web.multipart.MultipartHttpServletRequest;
 
 import javax.annotation.Resource;
 import java.io.IOException;
-
+@Deprecated
 @RestController
 public class FaceRegController {
     private FaceService faceService;

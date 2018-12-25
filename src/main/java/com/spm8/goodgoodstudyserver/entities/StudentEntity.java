@@ -11,7 +11,6 @@ public class StudentEntity {
     private String faceToken;
 
     @Id
-    //@GeneratedValue(strategy=GenerationType.AUTO) //改为varchar之后不可使用自动生成策略
     @Column(name = "STUDENT_ID", nullable = false, length = 255)
     public String getStudentId() {
         return studentId;

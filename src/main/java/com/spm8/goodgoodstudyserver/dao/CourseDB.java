@@ -10,7 +10,10 @@ import java.util.List;
 public interface CourseDB extends CrudRepository<CourseEntity,Integer> {
     //返回课程一门课程的签到次数
     @Query("select p.signupCount FROM CourseEntity p where p.courseId=:id")
-    List<String> getCourseSignCnt(@Param("id") int courseid);
+    List<Integer> getCourseSignCnt(@Param("id") int courseid);
+    //返回一门课程的检查次数
+    @Query("select p.checkCount FROM CourseEntity p where p.courseId=:id")
+    List<Integer> getCourseCheckCnt(@Param("id") int courseid);
     //返回一个教师的所有课程
     @Query("select p from CourseEntity p where p.teacherId=:id")
     List<CourseEntity>getCourseEntitiesByTeacherId(@Param("id") int teacherid);

@@ -12,8 +12,8 @@ public class CourseEntity {
     private String credit;
     private String classroom;
     private String classhour;
-    private String signupCount;
-
+    private int signupCount;
+    private int checkCount;
     @Id
     @Column(name = "COURSE_ID", nullable = false)
     public int getCourseId() {
@@ -76,14 +76,23 @@ public class CourseEntity {
 
     @Basic
     @Column(name = "SIGNUP_COUNT", nullable = true, length = 255)
-    public String getSignupCount() {
+    public int getSignupCount() {
         return signupCount;
     }
 
-    public void setSignupCount(String signupCount) {
+    public void setSignupCount(int signupCount) {
         this.signupCount = signupCount;
     }
 
+    @Basic
+    @Column(name = "CHECK_COUNT", nullable = true, length = 255)
+    public int getCheckCount() {
+        return checkCount;
+    }
+
+    public void setCheckCount(int checkCount) {
+        this.checkCount = checkCount;
+    }
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;
@@ -102,4 +111,5 @@ public class CourseEntity {
     public int hashCode() {
         return Objects.hash(courseId, courseName, teacherId, credit, classroom, classhour, signupCount);
     }
+
 }

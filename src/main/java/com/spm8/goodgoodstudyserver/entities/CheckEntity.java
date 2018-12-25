@@ -5,12 +5,11 @@ import java.sql.Timestamp;
 import java.util.Objects;
 
 @Entity
-@Table(name = "check", schema = "haohaoxuexi", catalog = "")
+@Table(name = "checktable", schema = "haohaoxuexi", catalog = "")
 public class CheckEntity {
     private int checkId;
     private Integer courseId;
     private String alivePercent;
-    private String desertPercent;
     private Timestamp checkTime;
     private Integer checkCnt;
 
@@ -46,16 +45,6 @@ public class CheckEntity {
     }
 
     @Basic
-    @Column(name = "DESERT_PERCENT", nullable = true, length = 255)
-    public String getDesertPercent() {
-        return desertPercent;
-    }
-
-    public void setDesertPercent(String desertPercent) {
-        this.desertPercent = desertPercent;
-    }
-
-    @Basic
     @Column(name = "CHECK_TIME", nullable = true)
     public Timestamp getCheckTime() {
         return checkTime;
@@ -83,13 +72,12 @@ public class CheckEntity {
         return checkId == that.checkId &&
                 Objects.equals(courseId, that.courseId) &&
                 Objects.equals(alivePercent, that.alivePercent) &&
-                Objects.equals(desertPercent, that.desertPercent) &&
                 Objects.equals(checkTime, that.checkTime) &&
                 Objects.equals(checkCnt, that.checkCnt);
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(checkId, courseId, alivePercent, desertPercent, checkTime, checkCnt);
+        return Objects.hash(checkId, courseId, alivePercent, checkTime, checkCnt);
     }
 }
