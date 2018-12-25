@@ -178,12 +178,17 @@ public class FaceService {
                 CourseEntity temp_2=list.get(0);
                 temp_2.setCheckCount(maxCNT+1);
                 courseDB.save(temp_2);
-            }else if(type.equals("RECHECK ")){
+                result.put("msg",  "SUCCESS");
+                return result.toString();
+            }else if(type.equals("RECHECK")){
                 checkEntity.setCheckCnt(Integer.parseInt(checkCNT));
                 checkDB.save(checkEntity);
                 result.put("checkCNT",checkCNT);
+                result.put("msg",  "SUCCESS");
+                return result.toString();
             }else{
-                result.put("msg","INPUT_DATA_ERROR");
+                result.put("msg","CLIENT_DATA_ERROR");
+                return result.toString();
             }
         } catch (Exception e) {
             e.printStackTrace();
@@ -191,8 +196,5 @@ public class FaceService {
             jsonObject.put("msg",  "SERVER_ERROR");
             return jsonObject.toString();
         }
-        result.put("msg",  "SUCCESS");
-        System.out.print("成功");
-        return result.toString();
     }
 }

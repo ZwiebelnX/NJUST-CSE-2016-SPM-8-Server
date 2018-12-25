@@ -112,6 +112,7 @@ public class SignService {
                 }
                 JSONArray escaspelist = new JSONArray();
                 for (StudentEntity a : result) {
+                    System.out.println(a.getStudentName()+"???");
                     JSONObject tmp = new JSONObject();
                     tmp.put("studentName", a.getStudentName());
                     tmp.put("studentID", a.getStudentId());
