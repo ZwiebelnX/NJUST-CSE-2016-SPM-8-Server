@@ -14,4 +14,7 @@ public interface StudentDB extends CrudRepository<StudentEntity,Integer> {
     //获取全部学生
     @Query("select p from StudentEntity p")
     List<StudentEntity> getALL();
+
+    @Query("select p from StudentEntity p where p.studentId=:ID")
+    StudentEntity getStudentByStudentId(@Param("ID")String studentid);
 }

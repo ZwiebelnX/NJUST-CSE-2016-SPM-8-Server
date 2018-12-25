@@ -19,7 +19,7 @@ public class AddFaceUtil {
         HashMap<String, String> map = new HashMap<>();
         map.put("api_key", "_WbTER4zNul6ANRxxupYZNtl6pNw8cQC");
         map.put("api_secret", "jEJ_oR0HjmEhkM5nEWYsWx_YfOKn7uNb");
-        map.put("outer_id", "0");
+        map.put("outer_id", id);
         map.put("face_tokens", token);
         //map.put("return_attributes", "gender,age,smiling,headpose,facequality,blur,eyestatus,emotion,ethnicity,beauty,mouthstatus,eyegaze,skinstatus");
         String str =null;

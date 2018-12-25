@@ -12,6 +12,7 @@ import com.spm8.goodgoodstudyserver.entities.StudentEntity;
 import com.spm8.goodgoodstudyserver.util.AddFaceUtil;
 import com.spm8.goodgoodstudyserver.util.FaceUtil;
 import com.spm8.goodgoodstudyserver.util.PostUtil;
+import com.spm8.goodgoodstudyserver.util.SearchUtil;
 import org.json.JSONArray;
 import org.json.JSONObject;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -62,7 +63,7 @@ public class FaceService {
             studentDB.save(user);
             List<StudentEntity> students = studentDB.getALL();
             int count=students.size()-1;
-            AddFaceUtil.add(faceToken,name);
+            AddFaceUtil.add(faceToken,id);
         } catch (Exception e) {
             e.printStackTrace();
             JSONObject jsonObject = new JSONObject();
@@ -83,32 +84,45 @@ public class FaceService {
             JSONObject json =new JSONObject(str);
             JSONArray faces = json.getJSONArray("faces");
             System.out.print("总人数为："+faces.length());
-            for (StudentEntity student : students) {
-                String dataToken = student.getFaceToken();
-                String id = student.getStudentName();
-                boolean flag = true;
-                for (int j = 0; j < faces.length(); j++) {
-                    JSONObject josnToken = faces.getJSONObject(j);
-                    String faceToken = josnToken.getString("face_token");
-                    String s = PostUtil.compare(dataToken, faceToken);
-                    JSONObject comp = new JSONObject(s);
-                    float confidence = comp.getFloat("confidence");
-                    System.out.println("置信度为" + confidence);
-                    JSONObject thresholdsJson = comp.getJSONObject("thresholds");
-                    float e5 = thresholdsJson.getFloat("1e-5");
-                    System.out.println("误识率为十万分之一的置信度阈值为：" + e5);
-                    if ((double) confidence >= (double) e5) {
-                        //更新数据库的签到数据以及到课学生数量更新+1
-                        System.out.println( id + "极度相似，登录成功！");
-                        flag = false;
-                        break;
-                    }
-                    if(flag==false)break;
-                }
-                if (flag) {
-                    escapeList.add(student);
-                    System.out.println("学生"+student.getStudentName()+"跷课");
-                }
+//            for (StudentEntity student : students) {
+//                String dataToken = student.getFaceToken();
+//                String id = student.getStudentName();
+//                boolean flag = true;
+//                for (int j = 0; j < faces.length(); j++) {
+//                    JSONObject josnToken = faces.getJSONObject(j);
+//                    String faceToken = josnToken.getString("face_token");
+//                    String s = PostUtil.compare(dataToken, faceToken);
+//                    JSONObject comp = new JSONObject(s);
+//                    float confidence = comp.getFloat("confidence");
+//                    System.out.println("置信度为" + confidence);
+//                    JSONObject thresholdsJson = comp.getJSONObject("thresholds");
+//                    float e5 = thresholdsJson.getFloat("1e-5");
+//                    System.out.println("误识率为十万分之一的置信度阈值为：" + e5);
+//                    if ((double) confidence >= (double) e5) {
+//                        //更新数据库的签到数据以及到课学生数量更新+1
+//                        System.out.println( id + "极度相似，登录成功！");
+//                        flag = false;
+//                        break;
+//                    }
+//                    if(flag==false)break;
+//                }
+//
+//                if (flag) {
+//                    escapeList.add(student);
+//                    System.out.println("学生"+student.getStudentName()+"跷课");
+//                }
+//            }
+            for (int j = 0; j < faces.length(); j++) {
+                JSONObject josnToken = faces.getJSONObject(j);
+                String faceToken = josnToken.getString("face_token");
+                String s=SearchUtil.search(faceToken);
+                JSONObject comp = new JSONObject(s);
+                JSONArray results=comp.getJSONArray("results");
+                JSONObject object=results.getJSONObject(0);
+                String SID=object.getString("user_id");
+                StudentEntity student=studentDB.getStudentByStudentId(SID);
+                System.out.print(SID+"签到成功！");
+                escapeList.add(student);
             }
             //总到课人数加入数据库
             return escapeList;
