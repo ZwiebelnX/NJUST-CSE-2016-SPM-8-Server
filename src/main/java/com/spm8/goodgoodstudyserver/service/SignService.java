@@ -79,7 +79,10 @@ public class SignService {
                 CourseEntity course = courseEntityList.get(0);
                 course.setSignupCount(maxCnt);
                 courseDB.save(course);
-                List<StudentEntity> result = faceService.doSignStudent(studentlist, img);
+                String stmp="";
+                stmp=courseID;
+                stmp+=maxCnt;
+                List<StudentEntity> result = faceService.doSignStudent(studentlist, img,stmp);
                 Timestamp current_time = new Timestamp(System.currentTimeMillis());
                 Map<String, Integer> map = new HashMap<>();
                 for (StudentEntity a : studentlist) {

@@ -77,7 +77,7 @@ public class FaceService {
         return jsonObject.toString();
     }
     //处理统计事物
-    public List<StudentEntity>doSignStudent(List<StudentEntity>students,MultipartFile file){
+    public List<StudentEntity>doSignStudent(List<StudentEntity>students,MultipartFile file,String stmp){
         List<StudentEntity>escapeList=new ArrayList<>();
         try {
             String str = FaceUtil.check(file.getBytes());
@@ -115,14 +115,23 @@ public class FaceService {
             for (int j = 0; j < faces.length(); j++) {
                 JSONObject josnToken = faces.getJSONObject(j);
                 String faceToken = josnToken.getString("face_token");
-                String s=SearchUtil.search(faceToken);
+                AddFaceUtil.add(faceToken,stmp);
+            }
+            for (StudentEntity student : students) {
+                String dataToken = student.getFaceToken();
+                String s=SearchUtil.search(dataToken,stmp);
                 JSONObject comp = new JSONObject(s);
                 JSONArray results=comp.getJSONArray("results");
                 JSONObject object=results.getJSONObject(0);
-                String SID=object.getString("user_id");
-                StudentEntity student=studentDB.getStudentByStudentId(SID);
-                System.out.print(SID+"签到成功！");
-                escapeList.add(student);
+                float confidence = object.getFloat("confidence");
+                System.out.println("置信度为" + confidence);
+                JSONObject thresholdsJson = comp.getJSONObject("thresholds");
+                float e5 = thresholdsJson.getFloat("1e-5");
+                System.out.println("误识率为十万分之一的置信度阈值为：" + e5);
+                if ((double) confidence >= (double) e5) {
+                    System.out.println( student.getStudentName() + "极度相似，登录成功！");
+                }
+                else escapeList.add(student);
             }
             //总到课人数加入数据库
             return escapeList;
