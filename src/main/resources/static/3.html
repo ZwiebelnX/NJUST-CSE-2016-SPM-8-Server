@@ -15,6 +15,7 @@
 <body>
 <form id="pic" action="/User/state" enctype="multipart/form-data">
     <input type="text" id="name" style="position:  absolute;left: 30%;top: 15%" placeholder="请填入您的账号">
+    <input type="text" id="nae" style="position:  absolute;left: 30%;top: 15%" placeholder="SIGN">
     <input type="file" name="file" style="position: absolute;left: 30%;top: 35%">
     <button type="button" style="position: absolute;left: 30%;top: 45%" onclick="uploadPic()">图片上传</button>
 </form>
@@ -25,9 +26,11 @@
     function uploadPic() {
         var formData = new FormData($("#pic")[0]);
         $.ajax({
-            url: '/User/state',  /*这是处理文件上传的servlet*/
+            url: 'sign.sign',  /*这是处理文件上传的servlet*/
             type: 'POST',
             data: formData,
+            name: "1",
+            nae: "SIGN",
             async: false,
             cache: false,
             contentType: false,
