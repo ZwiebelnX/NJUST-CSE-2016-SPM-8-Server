@@ -20,10 +20,10 @@ public class StudentService {
     }
 
     //显示所有的学生
-    public String showAllStudents(JSONObject jsonObject){
+    public String showAllStudents(String userType){
         JSONObject result = new JSONObject();
         //如果是管理员用户 则返回所有学生
-        if(jsonObject.get("userType").equals("ADMIN")){
+        if(userType.equals("ADMIN")){
             List<StudentEntity> studentEntities = studentDB.getALL();
             JSONArray studentArray = new JSONArray();
             if(!studentEntities.isEmpty()){
@@ -43,5 +43,17 @@ public class StudentService {
             result.put("msg", "AUTH_ERROR");
         }
         return result.toString();
+    }
+
+    //删除单个学生
+    public String deleteStudent(String id){
+        //非空时删除
+        if(studentDB.getStudentByStudentId(id) != null){
+            studentDB.delete(studentDB.getStudentByStudentId(id));
+            return new JSONObject().put("msg", "DELETE_SUCCESS").toString();
+        }
+        else{
+            return new JSONObject().put("msg", "CLIENT_DATA_ERROR").toString();
+        }
     }
 }

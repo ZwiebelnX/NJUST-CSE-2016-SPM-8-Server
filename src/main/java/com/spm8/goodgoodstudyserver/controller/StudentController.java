@@ -26,7 +26,7 @@ public class StudentController {
     @RequestMapping(value = "/showAllStudents", produces = "application/json;charset=UTF-8")
     public String showAllStudents(@RequestBody String jsonString) {
         JSONObject jsonObject = new JSONObject(jsonString);
-        return studentService.showAllStudents(jsonObject);
+        return studentService.showAllStudents(jsonObject.getString("userType"));
     }
 
     //前端传来学生信息 录入学生信息
@@ -36,5 +36,15 @@ public class StudentController {
         String studentID = request.getParameter("studentID");
         MultipartFile studentFaceImage = request.getFile("studentFaceImage");
         return faceService.doFaceEnter(studentFaceImage, studentID, studentName);
+    }
+
+    @RequestMapping(value = "/deleteStudent", produces = "application/json;charset=UTF-8")
+    public String deleteStudent(@RequestBody String jsonString){
+        JSONObject jsonObject = new JSONObject(jsonString);
+        //如果不是管理员 则不允许删除
+        if(!jsonObject.get("userType").equals("ADMIN")){
+            return new JSONObject().put("msg", "AUTH_ERROR").toString();
+        }
+        return studentService.deleteStudent(jsonObject.getString("studentId"));
     }
 }

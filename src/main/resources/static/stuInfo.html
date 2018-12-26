@@ -32,10 +32,10 @@
         <div class="collapse navbar-collapse" id="navbarSupportedContent">
             <ul class="navbar-nav mr-auto">
                 <li class="nav-item active">
-                    <a class="nav-link" href="#">学生信息<span class="sr-only">(current)</span></a>
+                    <a class="nav-link" href="/SPM/stuInfo.html">学生信息<span class="sr-only">(current)</span></a>
                 </li>
                 <li class="nav-item">
-                    <a class="nav-link" href="#" style="color:rgb(202, 203, 204)">状态统计</a>
+                    <a class="nav-link" href="/SPM/classStatus.html" style="color:rgb(202, 203, 204)">状态统计</a>
                 </li>
             </ul>
             <ul class="nav navbar-nav navbar-right ">
@@ -122,7 +122,7 @@
             };
             $.ajax({
                 type: "POST",
-                url: "/student/showAllStudents",
+                url: "information.sign",
                 contentType: "application/json; charset=utf-8",
                 data: JSON.stringify(json),
                 success: function (res) {
@@ -141,7 +141,7 @@
         sessionStorage.removeItem("userType");
         sessionStorage.removeItem("teacherID");
         sessionStorage.removeItem("adminID");
-        window.location.replace("/login.html");
+        window.location.replace(window.location.href.substring(0, window.location.href.lastIndexOf('/')) + "/login.html");
     }
 
     //对DOM进行操作 显示学生信息
@@ -161,6 +161,7 @@
                 //ID列元素
                 let IDCol = $("<div></div>");
                 IDCol.attr("class", "col-md-6 column");
+
                 IDCol.text(obj.studentID);
                 row.append(IDCol);
                 //操作列元素
@@ -170,6 +171,8 @@
                 let deleteBtn = $("<button></button>");
                 deleteBtn.attr("type", "button");
                 deleteBtn.attr("class", "btn btn-outline-danger");
+                deleteBtn.attr("id", obj.studentID);
+                deleteBtn.attr("onclick", "deleteStudent(id)");
                 deleteBtn.text("删除");
                 instCol.append(deleteBtn);
                 row.append(instCol);
@@ -190,6 +193,32 @@
             row.append(InfoCol);
             container.append(row)
         }
+    }
+
+    function deleteStudent(id){
+        let json = {
+            userType : sessionStorage.getItem("userType"),
+            studentId : id
+        };
+        $.ajax({
+            type: "POST",
+            url: "student/deleteStudent",
+            contentType: "application/json; charset=utf-8",
+            data: JSON.stringify(json),
+            dataType: "json",
+            success: function (res) {
+                if(res.msg === "DELETE_SUCCESS"){
+                    location.reload();
+                }
+                else{
+                    alert("授权错误！请重试");
+                }
+            },
+            error: function (XMLHttpRequest, textStatus) {
+                alert("与服务器通讯失败！请刷新重试！");
+                console.error(textStatus + ":" + XMLHttpRequest.status + " " + XMLHttpRequest.readyState);
+            }
+        });
     }
 
     //表单验证
