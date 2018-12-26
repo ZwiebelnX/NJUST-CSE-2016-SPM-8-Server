@@ -33,7 +33,7 @@ public class LoginService {
         UserEntity user = new UserEntity();
         if (account == null || pwd == null)
             msgString = "INPUT_DATA_ERROR";
-        List<UserEntity> userEntityList = accountDB.getByUserName(account);
+            List<UserEntity> userEntityList = accountDB.getByUserName(account);
         if (userEntityList.size() < 1) {
             msgString = "ACCOUNT_ERROR";
         } else {

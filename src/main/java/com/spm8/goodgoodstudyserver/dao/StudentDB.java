@@ -17,4 +17,8 @@ public interface StudentDB extends CrudRepository<StudentEntity,Integer> {
 
     @Query("select p from StudentEntity p where p.studentId=:ID")
     StudentEntity getStudentByStudentId(@Param("ID")String studentid);
+
+    //获取参加了一门课的第i次签到且签到状态为j的学生
+    @Query("select p from StudentEntity p,SignupEntity o where p.studentId=o.studentId AND o.courseId=:ID AND o.signupCnt=:signCNT AND o.signupResult=:result")
+    List<StudentEntity> getStudentBySucceessSigned(@Param("ID")int courseid,@Param("signCNT")int signCNT,@Param("result")String result);
 }

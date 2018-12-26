@@ -145,16 +145,27 @@ public class FaceService {
     public String doCheckStatus(MultipartFile file, String courseID, String type, String checkCNT) {
         String str = "";
         JSONObject result = new JSONObject();
-        List<Integer> checklist = courseDB.getCourseCheckCnt(Integer.valueOf(courseID));
+        List<Integer> checklist = courseDB.getCourseSignCnt(Integer.valueOf(courseID));
+        List<StudentEntity>studentEntityList=new ArrayList<>();
         if (checklist == null) {
             JSONObject jsonObject = new JSONObject();
-            jsonObject.put("msg", "SERVER_ERROR_2");
+            jsonObject.put("msg", "INPUT_DATA_ERROR_ID");
             return jsonObject.toString();
         }
-        int maxCNT = checklist.get(0);
+        int maxCNT;
+        try{
+            maxCNT = checklist.get(0);
+            //获取上节课好好签到的人的个数。
+            studentEntityList=studentDB.getStudentBySucceessSigned(Integer.valueOf(courseID),maxCNT,"YES");
+        }catch (Exception ex){
+            ex.printStackTrace();
+            JSONObject jsonObject = new JSONObject();
+            jsonObject.put("msg", "SERVER_ERROR");
+            return jsonObject.toString();
+        }
         if (file == null) {
             JSONObject jsonObject = new JSONObject();
-            jsonObject.put("msg", "CLIENT_DATA_ERROR");
+            jsonObject.put("msg", "INPUT_DATA_ERROR_IMG");
             return jsonObject.toString();
         }
         try {
@@ -162,7 +173,7 @@ public class FaceService {
         } catch (Exception ex) {
             ex.printStackTrace();
             JSONObject jsonObject = new JSONObject();
-            jsonObject.put("msg", "CLIENT_DATA_ERROR");
+            jsonObject.put("msg", "CLIENT_DATA_ERROR_IMG");
             return jsonObject.toString();
         }
         try {
@@ -170,9 +181,10 @@ public class FaceService {
             JSONArray faces = json.getJSONArray("faces");
             System.out.print("总人数为：" + faces.length());
             //获取上课的总人数，目前能监测到的人脸数量为faces.length(),减一下，不好好听课的同学数量返回到数据库。
-            int allStudent = studentDB.getStudentByCourseID(Integer.valueOf(courseID)).size();
-            int escaped = allStudent - faces.length();
-            double percent = escaped * 100.0 / allStudent;
+            int allStudent =studentEntityList.size();
+            int alive=faces.length();
+            alive=(alive>allStudent)?allStudent:alive;
+            double percent = alive / allStudent;
             CheckEntity checkEntity = new CheckEntity();
             checkEntity.setAlivePercent(Double.toString(percent));
             checkEntity.setCourseId(Integer.parseInt(courseID));
@@ -180,24 +192,23 @@ public class FaceService {
             checkEntity.setCheckTime(current_time);
             result.put("result", Double.toString(percent));
             if (type.equals("FIRST_CHECK")) {
-                checkEntity.setCheckCnt(maxCNT + 1);
+                checkEntity.setCheckCnt(maxCNT);
                 checkDB.save(checkEntity);
-                String temp = Integer.toString(maxCNT + 1);
+                String temp = Integer.toString(maxCNT);
                 result.put("checkCNT", temp);
                 List<CourseEntity> list = courseDB.getCourseEntitiesByCourseId(Integer.valueOf(courseID));
                 CourseEntity temp_2 = list.get(0);
-                temp_2.setCheckCount(maxCNT + 1);
+                temp_2.setCheckCount(maxCNT);
                 courseDB.save(temp_2);
                 result.put("msg", "SUCCESS");
                 return result.toString();
             } else if (type.equals("RECHECK")) {
-                checkEntity.setCheckCnt(Integer.parseInt(checkCNT));
                 checkDB.save(checkEntity);
-                result.put("checkCNT", checkCNT);
+                result.put("checkCNT", Integer.toString(maxCNT));
                 result.put("msg", "SUCCESS");
                 return result.toString();
             } else {
-                result.put("msg", "CLIENT_DATA_ERROR");
+                result.put("msg", "INPUT_DATA_ERROR");
                 return result.toString();
             }
         } catch (Exception e) {

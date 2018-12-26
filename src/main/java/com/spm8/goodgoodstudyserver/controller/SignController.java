@@ -13,6 +13,7 @@ import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.multipart.MultipartHttpServletRequest;
 
+import javax.persistence.criteria.CriteriaBuilder;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -60,5 +61,20 @@ public class SignController {
             e.printStackTrace();
         }
         return signService.doResignin(signCnt, courseid, studentList);
+    }
+    @RequestMapping(value = "information.sign", produces = "application/json;charset=UTF-8")//设置返回头为json
+    @ResponseBody
+    public String doGetInformation(@RequestBody String s){
+        int courseID;
+        try {
+            JSONObject myJsonObject = new JSONObject(s);
+            String temp = myJsonObject.getString("courseID");
+            courseID = Integer.parseInt(temp);
+        }catch (Exception ex){
+            JSONObject jsonObject=new JSONObject();
+            jsonObject.put("msg","INPUT_DATA_ERROR");
+            return  jsonObject.toString();
+        }
+        return signService.doGetInfo(courseID);
     }
 }

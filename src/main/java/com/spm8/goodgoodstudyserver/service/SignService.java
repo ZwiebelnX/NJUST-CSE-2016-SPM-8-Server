@@ -1,9 +1,12 @@
 package com.spm8.goodgoodstudyserver.service;
 
 import com.fasterxml.jackson.databind.util.JSONPObject;
+import com.mysql.cj.xdevapi.JsonArray;
+import com.spm8.goodgoodstudyserver.dao.CheckDB;
 import com.spm8.goodgoodstudyserver.dao.CourseDB;
 import com.spm8.goodgoodstudyserver.dao.SignUpDB;
 import com.spm8.goodgoodstudyserver.dao.StudentDB;
+import com.spm8.goodgoodstudyserver.entities.CheckEntity;
 import com.spm8.goodgoodstudyserver.entities.CourseEntity;
 import com.spm8.goodgoodstudyserver.entities.SignupEntity;
 import com.spm8.goodgoodstudyserver.entities.StudentEntity;
@@ -29,13 +32,15 @@ public class SignService {
     private final CourseDB courseDB;
     private final StudentDB studentDB;
     private final FaceService faceService;
+    private final CheckDB checkDB;
 
     @Autowired
-    public SignService(CourseDB courseDB, StudentDB studentDB, FaceService faceService, SignUpDB signUpDB) {
+    public SignService(CourseDB courseDB, StudentDB studentDB, FaceService faceService, SignUpDB signUpDB,CheckDB checkDB) {
         this.courseDB = courseDB;
         this.studentDB = studentDB;
         this.faceService = faceService;
         this.signUpDB = signUpDB;
+        this.checkDB=checkDB;
     }
 
     //将字符串转换成二进制流
@@ -154,5 +159,58 @@ public class SignService {
         JSONObject jsonObject = new JSONObject();
         jsonObject.put("msg", msg);
         return jsonObject.toString();
+    }
+
+    public String doGetInfo(int courseID){
+        int maxCNT;
+        try{
+            maxCNT=courseDB.getCourseSignCnt(courseID).get(0);
+        }catch (Exception ex){
+            ex.printStackTrace();
+            JSONObject jsonObject=new JSONObject();
+            jsonObject.put("msg","INPUT_DATA_ERROR");
+            return  jsonObject.toString();
+        }
+        try{
+            JSONArray finalarr=new JSONArray();
+            for(int i=1;i<=maxCNT;i++){
+                JSONObject tmp=new JSONObject();
+                tmp.put("CNT",Integer.toString(i));
+                List<StudentEntity>studentEntityList=studentDB.getStudentBySucceessSigned(courseID,i,"NO");
+                List<CheckEntity>checkEntities=checkDB.getStudentByStudentId(courseID,i);
+                double cnt=0.0;
+                int divisor=checkEntities.size();
+                if(divisor>=1){
+                    for(CheckEntity temp:checkEntities){
+                        double value=Double.parseDouble(temp.getAlivePercent());
+                        cnt+=value;
+                    }
+                    cnt/=divisor;
+                    tmp.put("rate",Double.toString(cnt));
+                }else{
+                    JSONObject jsonObject=new JSONObject();
+                    jsonObject.put("msg","INPUT_DATA_ERROR");
+                    return  jsonObject.toString();
+                }
+                tmp.put("escapeCNT",studentEntityList.size());
+                JsonArray jsonArray=new JsonArray();
+                for(StudentEntity a:studentEntityList){
+                    JSONObject jsonObject=new JSONObject();
+                    jsonObject.put("studentName",a.getStudentName());
+                    jsonObject.put("studentID",a.getStudentId());
+                }
+                tmp.put("studentList",jsonArray);
+                finalarr.put(tmp);
+            }
+            JSONObject fin=new JSONObject();
+            fin.put("msg","SUCCESS");
+            fin.put("signCNT",Integer.toString(maxCNT));
+            fin.put("result",finalarr);
+            return  fin.toString();
+        }catch (Exception ex){
+            JSONObject jsonObject=new JSONObject();
+            jsonObject.put("msg","SERVER_ERROR");
+            return  jsonObject.toString();
+        }
     }
 }
