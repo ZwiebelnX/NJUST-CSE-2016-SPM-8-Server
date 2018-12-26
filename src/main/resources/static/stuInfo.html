@@ -39,8 +39,8 @@
                 </li>
             </ul>
             <ul class="nav navbar-nav navbar-right ">
-                <li class="text" id="userName">
-
+                <li class="text nav-item" style="margin-top:5px;margin-right:15px;">
+                    您好！<b id="userName"></b>
                 </li>
                 <li class="button">
                     <button type="button" class="btn btn-outline-danger" onclick="signOut()">退出</button>
@@ -116,7 +116,7 @@
             alert("请先登录！");
             signOut();
         } else {
-            $("#userName").text("您好！" + sessionStorage.getItem("userName"));
+            $("#userName").text(sessionStorage.getItem("userName"));
             let json = {
                 userType: sessionStorage.getItem("userType")
             };
@@ -147,34 +147,49 @@
     //对DOM进行操作 显示学生信息
     function showAllStudent(res){
         let container = $("#info-container");
-        $.each(res.studentsInfo, function (index, obj) {
+        if(res.studentsInfo != null && res.studentsInfo !== ""){
+            $.each(res.studentsInfo, function (index, obj) {
+                //行元素
+                let row = $("<div></div>");
+                row.attr("class", "row clearfix");
+                row.attr("style", "margin-top:5px;");
+                //名称列元素
+                let nameCol = $("<div></div>");
+                nameCol.attr("class", "col-md-3 column");
+                nameCol.text(obj.studentName);
+                row.append(nameCol);
+                //ID列元素
+                let IDCol = $("<div></div>");
+                IDCol.attr("class", "col-md-6 column");
+                IDCol.text(obj.studentID);
+                row.append(IDCol);
+                //操作列元素
+                let instCol = $("<div></div>");
+                instCol.attr("class", "col-md-3 column");
+                //操作中的按钮
+                let deleteBtn = $("<button></button>");
+                deleteBtn.attr("type", "button");
+                deleteBtn.attr("class", "btn btn-outline-danger");
+                deleteBtn.text("删除");
+                instCol.append(deleteBtn);
+                row.append(instCol);
+                //添加至info-container元素
+                container.append(row)
+            })
+        }
+        //当返回的学生列表为空时的统一处理
+        else{
             //行元素
             let row = $("<div></div>");
             row.attr("class", "row clearfix");
             row.attr("style", "margin-top:5px;");
             //名称列元素
-            let nameCol = $("<div></div>");
-            nameCol.attr("class", "col-md-3 column");
-            nameCol.text(obj.studentName);
-            row.append(nameCol);
-            //ID列元素
-            let IDCol = $("<div></div>");
-            IDCol.attr("class", "col-md-6 column");
-            IDCol.text(obj.studentID);
-            row.append(IDCol);
-            //操作列元素
-            let instCol = $("<div></div>");
-            instCol.attr("class", "col-md-3 column");
-            //操作中的按钮
-            let deleteBtn = $("<button></button>");
-            deleteBtn.attr("type", "button");
-            deleteBtn.attr("class", "btn btn-outline-danger");
-            deleteBtn.text("删除");
-            instCol.append(deleteBtn);
-            row.append(instCol);
-            //添加至info-container元素
+            let InfoCol = $("<div></div>");
+            InfoCol.attr("class", "col-md-12 column");
+            InfoCol.text("暂无学生列表信息");
+            row.append(InfoCol);
             container.append(row)
-        })
+        }
     }
 
     //表单验证

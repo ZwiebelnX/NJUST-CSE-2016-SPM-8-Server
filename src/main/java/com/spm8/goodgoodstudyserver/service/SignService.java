@@ -39,8 +39,8 @@ public class SignService {
     }
 
     //将字符串转换成二进制流
-    public byte[] convertStringToByte(String s){
-        if(s==null)return null;
+    public byte[] convertStringToByte(String s) {
+        if (s == null) return null;
         ByteArrayOutputStream out = new ByteArrayOutputStream();
         try {
             ByteArrayInputStream in = new ByteArrayInputStream(s.getBytes("ISO-8859-1"));
@@ -58,18 +58,18 @@ public class SignService {
     }
 
     //具体实现签到
-    public String doSignin(String courseID, String signType, MultipartFile img){
-        List<Integer>signedlist=courseDB.getCourseSignCnt(Integer.valueOf(courseID));
-        String msg="";
-        JSONObject jsonObject=new JSONObject();
-        List<CourseEntity>courseEntityList=courseDB.getCourseEntitiesByCourseId(Integer.valueOf(courseID));
-        if(courseEntityList.size()==0){
-            msg="SERVER_ERROR";
-            signType="ERROR";
+    public String doSignin(String courseID, String signType, MultipartFile img) {
+        List<Integer> signedlist = courseDB.getCourseSignCnt(Integer.valueOf(courseID));
+        String msg = "";
+        JSONObject jsonObject = new JSONObject();
+        List<CourseEntity> courseEntityList = courseDB.getCourseEntitiesByCourseId(Integer.valueOf(courseID));
+        if (courseEntityList.size() == 0) {
+            msg = "SERVER_ERROR_4";
+            signType = "ERROR";
         }
-        if(signedlist.size()<=0||(!signType.equals("SIGN")&&!signType.equals("RESIGN"))){
-            msg="CLIENT_DATA_ERROR";
-        }else{
+        if (signedlist.size() <= 0 || (!signType.equals("SIGN") && !signType.equals("RESIGN"))) {
+            msg = "CLIENT_DATA_ERROR";
+        } else {
             try {
                 int maxCnt = signedlist.get(0);
                 List<StudentEntity> studentlist = studentDB.getStudentByCourseID(Integer.valueOf(courseID));
@@ -124,34 +124,35 @@ public class SignService {
                 msg = "SUCCESS";
                 jsonObject.put("signFailedList", escaspelist);
                 jsonObject.put("signCnt", Integer.toString(maxCnt));
-            }catch (Exception ex){
+            } catch (Exception ex) {
                 ex.printStackTrace();
-                jsonObject.put("msg","SERVER_ERROR");
+                jsonObject.put("msg", "SERVER_ERROR_6");
                 return jsonObject.toString();
             }
         }
-        jsonObject.put("msg",msg);
+        jsonObject.put("msg", msg);
         return jsonObject.toString();
     }
+
     //具体实现重新签到
-    public String doResignin(String signcnt,String courseID, List<StudentEntity> studentlist){
-        String msg="";
-        List<SignupEntity>signuplist=signUpDB.getSignupListBycouseIDAndSignupCNT(Integer.valueOf(courseID),Integer.valueOf(signcnt));
-        if(signuplist.size()<=0)
-            msg="SERVER_ERROR";
-        else{
-            for(SignupEntity sign:signuplist){
-                for(StudentEntity student:studentlist){
-                    if(sign.getStudentId().equals(student.getStudentId())){
+    public String doResignin(String signcnt, String courseID, List<StudentEntity> studentlist) {
+        String msg = "";
+        List<SignupEntity> signuplist = signUpDB.getSignupListBycouseIDAndSignupCNT(Integer.valueOf(courseID), Integer.valueOf(signcnt));
+        if (signuplist.size() <= 0)
+            msg = "SERVER_ERROR_5";
+        else {
+            for (SignupEntity sign : signuplist) {
+                for (StudentEntity student : studentlist) {
+                    if (sign.getStudentId().equals(student.getStudentId())) {
                         sign.setSignupResult("YES");
                         signUpDB.save(sign);
                     }
                 }
             }
-            msg="SUCCESS";
+            msg = "SUCCESS";
         }
-        JSONObject jsonObject=new JSONObject();
-        jsonObject.put("msg",msg);
+        JSONObject jsonObject = new JSONObject();
+        jsonObject.put("msg", msg);
         return jsonObject.toString();
     }
 }
