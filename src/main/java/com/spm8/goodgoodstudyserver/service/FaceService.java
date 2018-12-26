@@ -9,10 +9,7 @@ import com.spm8.goodgoodstudyserver.dao.StudentDB;
 import com.spm8.goodgoodstudyserver.entities.CheckEntity;
 import com.spm8.goodgoodstudyserver.entities.CourseEntity;
 import com.spm8.goodgoodstudyserver.entities.StudentEntity;
-import com.spm8.goodgoodstudyserver.util.AddFaceUtil;
-import com.spm8.goodgoodstudyserver.util.FaceUtil;
-import com.spm8.goodgoodstudyserver.util.PostUtil;
-import com.spm8.goodgoodstudyserver.util.SearchUtil;
+import com.spm8.goodgoodstudyserver.util.*;
 import org.json.JSONArray;
 import org.json.JSONObject;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -112,6 +109,7 @@ public class FaceService {
 //                    System.out.println("学生"+student.getStudentName()+"跷课");
 //                }
 //            }
+            CreatSetUtil.com(stmp);
             for (int j = 0; j < faces.length(); j++) {
                 JSONObject josnToken = faces.getJSONObject(j);
                 String faceToken = josnToken.getString("face_token");
