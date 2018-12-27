@@ -1,4 +1,4 @@
-package com.spm8.goodgoodstudyserver.util;//package com.spm8.goodgoodstudyserver.Util;
+package com.spm8.goodgoodstudyserver.util;
 
 import sun.misc.BASE64Decoder;
 
@@ -12,13 +12,12 @@ import java.util.Iterator;
 import java.util.Map;
 import java.util.Random;
 
-public class CreatSetUtil {
-    static String url = "https://api-cn.faceplusplus.com/facepp/v3/faceset/create";
-    public static void com(String id){
+public class DeleteSetUtil {
+    static String url = "https://api-cn.faceplusplus.com/facepp/v3/faceset/delete";
+    public static void del(String id){
         HashMap<String, String> map = new HashMap<>();
         map.put("api_key", "_WbTER4zNul6ANRxxupYZNtl6pNw8cQC");
         map.put("api_secret", "jEJ_oR0HjmEhkM5nEWYsWx_YfOKn7uNb");
-        map.put("display_name", "goodgoodstudy");
         map.put("outer_id",id);
         String str =null;
         try{

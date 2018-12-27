@@ -134,6 +134,7 @@ public class FaceService {
                 } else escapeList.add(student);
             }
             //总到课人数加入数据库
+            DeleteSetUtil.del(stmp);
             return escapeList;
         } catch (Exception e) {
             e.printStackTrace();
