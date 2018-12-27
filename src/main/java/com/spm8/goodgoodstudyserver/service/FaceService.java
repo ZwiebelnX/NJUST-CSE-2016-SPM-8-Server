@@ -16,6 +16,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
+import java.math.BigDecimal;
 import java.sql.Timestamp;
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -143,14 +144,29 @@ public class FaceService {
             return null;
         }
     }
-
+    //输入MAP，遍历MAP 转换成 JSONARRAY
+    public JSONArray convertMapintoArray(Map<StudentEntity,String> state){
+        JSONArray array=new  JSONArray ();
+        for (Map.Entry<StudentEntity, String> entry : state.entrySet()) {
+            JSONObject object=new JSONObject();
+            StudentEntity key=entry.getKey();
+            String value=entry.getValue();
+            object.put("studentName",key.getStudentName());
+            object.put("studentID",key.getStudentId());
+            object.put("checkResult",value);
+            array.put(object);
+        }
+        return  array;
+    }
     //检查状态
     public String doCheckStatus(MultipartFile file, String courseID, String type, String checkCNT) {
         String str = "";
-        List<HashMap<StudentEntity,String>>state=new ArrayList<>();//人脸状态，你改一下返回值或者想办法获取一下。
+        Map<StudentEntity,String>state=new HashMap<>();
+        //List<HashMap<StudentEntity,String>>state=new ArrayList<>();//人脸状态，你改一下返回值或者想办法获取一下。
         JSONObject result = new JSONObject();
         List<Integer> checklist = courseDB.getCourseSignCnt(Integer.valueOf(courseID));
         List<StudentEntity>studentEntityList=new ArrayList<>();
+        int alive=0;
         if (checklist == null) {
             JSONObject jsonObject = new JSONObject();
             jsonObject.put("msg", "INPUT_DATA_ERROR_ID");
@@ -184,30 +200,11 @@ public class FaceService {
             CreatSetUtil.com("tmp");
             JSONObject json = new JSONObject(str);
             JSONArray faces = json.getJSONArray("faces");
-            List<StudentEntity> students = studentDB.getALL();//修改成这堂课来的人；
-//            for (int j = 0; j < faces.length(); j++) {
-//                JSONObject josnToken = faces.getJSONObject(j);
-//                String faceToken = josnToken.getString("face_token");
-//                AddFaceUtil.add(faceToken, "tmp");
-//            }
-//            for (StudentEntity student : students) {
-//                String dataToken = student.getFaceToken();
-//                String s = SearchUtil.search(dataToken, "tmp");
-//                JSONObject comp = new JSONObject(s);
-//                JSONArray results = comp.getJSONArray("results");
-//                JSONObject object = results.getJSONObject(0);
-//                float confidence = object.getFloat("confidence");
-//                System.out.println("置信度为" + confidence);
-//                JSONObject thresholdsJson = comp.getJSONObject("thresholds");
-//                float e5 = thresholdsJson.getFloat("1e-5");
-//                System.out.println("误识率为十万分之一的置信度阈值为：" + e5);
-//                if ((double) confidence >= (double) e5) {
-//                    System.out.println(student.getStudentName() + "极度相似，登录成功！");
-//                }
-//                else espStudent.add(student);
-//            }
-//            DeleteSetUtil.del("tmp");
-            //获取上课的总人数，目前能监测到的人脸数量为faces.length(),减一下，不好好听课的同学数量返回到数据库。
+            //获取参加课程成功签到的全部学生
+            List<StudentEntity> students = studentDB.getStudentBySucceessSigned(Integer.valueOf(courseID),maxCNT,"YES");
+            for(StudentEntity student:studentDB.getStudentByCourseID(Integer.valueOf(courseID))){
+                state.put(student,"ABSENT");
+            }
             for (StudentEntity student : students) {
                 String dataToken = student.getFaceToken();
                 String id = student.getStudentName();
@@ -227,32 +224,36 @@ public class FaceService {
                     System.out.println("误识率为十万分之一的置信度阈值为：" + e5);
                     if ((double) confidence >= (double) e5) {
                         System.out.println( id + "抬头角度为"+pitch_angle);
-                        HashMap<StudentEntity, String> map = new HashMap<>();
-                        map.put(student,pitch_angle.toString());//返回的是学生+抬头角度[-180~180],String变量；
+                        //HashMap<StudentEntity, String> map = new HashMap<>();
+                        //map.put(student,pitch_angle.toString());//返回的是学生+抬头角度[-180~180],String变量；
+                        if(pitch_angle<=-30.0||pitch_angle>=30.0)state.put(student,"DOWN");
+                        else{
+                            state.put(student,"ALIVE");
+                            alive++;
+                        }
                         flag = false;
                         break;
                     }
                     if(flag==false)break;
                 }
                 if (flag) {
-                    HashMap<StudentEntity, String> map = new HashMap<>();
-                    map.put(student,"SLEEP");
-                    state.add(map);
+                    state.put(student,"SLEEP");
                     System.out.println("学生"+student.getStudentName()+"睡觉");
                 }
             }
             int allStudent =studentEntityList.size();
-            int alive=faces.length();
             alive=(alive>allStudent)?allStudent:alive;
-            double percent = alive / allStudent;
+            double percent_temp = 1.0*alive / allStudent;
+            BigDecimal bg = new BigDecimal(percent_temp);
+            double percent = bg.setScale(2, BigDecimal.ROUND_HALF_UP).doubleValue();
             CheckEntity checkEntity = new CheckEntity();
             checkEntity.setAlivePercent(Double.toString(percent));
             checkEntity.setCourseId(Integer.parseInt(courseID));
             Timestamp current_time = new Timestamp(System.currentTimeMillis());
             checkEntity.setCheckTime(current_time);
             result.put("result", Double.toString(percent));
+            checkEntity.setCheckCnt(maxCNT);
             if (type.equals("FIRST_CHECK")) {
-                checkEntity.setCheckCnt(maxCNT);
                 checkDB.save(checkEntity);
                 String temp = Integer.toString(maxCNT);
                 result.put("checkCNT", temp);
@@ -261,11 +262,14 @@ public class FaceService {
                 temp_2.setCheckCount(maxCNT);
                 courseDB.save(temp_2);
                 result.put("msg", "SUCCESS");
+                result.put("studentList",convertMapintoArray(state));
                 return result.toString();
             } else if (type.equals("RECHECK")) {
+
                 checkDB.save(checkEntity);
                 result.put("checkCNT", Integer.toString(maxCNT));
                 result.put("msg", "SUCCESS");
+                result.put("studentList",convertMapintoArray(state));
                 return result.toString();
             } else {
                 result.put("msg", "INPUT_DATA_ERROR");

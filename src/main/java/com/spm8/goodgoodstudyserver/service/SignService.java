@@ -20,6 +20,7 @@ import javax.persistence.criteria.CriteriaBuilder;
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
+import java.math.BigDecimal;
 import java.sql.Timestamp;
 import java.util.HashMap;
 import java.util.List;
@@ -116,11 +117,12 @@ public class SignService {
                     }
                 }
                 JSONArray escaspelist = new JSONArray();
-                for (StudentEntity a : result) {
-                    System.out.println(a.getStudentName()+"???");
+                for (StudentEntity a : studentlist) {
+                    //System.out.println(a.getStudentName()+"???");
                     JSONObject tmp = new JSONObject();
                     tmp.put("studentName", a.getStudentName());
                     tmp.put("studentID", a.getStudentId());
+                    tmp.put("signResult",(map.get(a.getStudentId()) == 1)?"YES":"NO");
                     escaspelist.put(tmp);
                 }
                 msg = "SUCCESS";
@@ -158,7 +160,7 @@ public class SignService {
         return jsonObject.toString();
     }
 
-    public String doGetInfo(int courseID){
+    public String doGetInfo(int courseID,String type,int userID){
         int maxCNT;
         try{
             maxCNT=courseDB.getCourseSignCnt(courseID).get(0);
@@ -174,6 +176,7 @@ public class SignService {
                 JSONObject tmp=new JSONObject();
                 tmp.put("CNT",Integer.toString(i));
                 List<StudentEntity>studentEntityList=studentDB.getStudentBySucceessSigned(courseID,i,"NO");
+                List<StudentEntity>studentEntityList_acc=studentDB.getStudentBySucceessSigned(courseID,i,"YES");
                 List<CheckEntity>checkEntities=checkDB.getStudentByStudentId(courseID,i);
                 double cnt=0.0;
                 int divisor=checkEntities.size();
@@ -183,18 +186,27 @@ public class SignService {
                         cnt+=value;
                     }
                     cnt/=divisor;
+                    BigDecimal bg = new BigDecimal(cnt);
+                    cnt = bg.setScale(2, BigDecimal.ROUND_HALF_UP).doubleValue();
                     tmp.put("rate",Double.toString(cnt));
                 }else{
-                    JSONObject jsonObject=new JSONObject();
-                    jsonObject.put("msg","INPUT_DATA_ERROR");
-                    return  jsonObject.toString();
+                    tmp.put("rate","NULL");
                 }
                 tmp.put("escapeCNT",studentEntityList.size());
-                JsonArray jsonArray=new JsonArray();
+                JSONArray jsonArray=new JSONArray();
                 for(StudentEntity a:studentEntityList){
                     JSONObject jsonObject=new JSONObject();
                     jsonObject.put("studentName",a.getStudentName());
                     jsonObject.put("studentID",a.getStudentId());
+                    jsonObject.put("signResult","NO");
+                    jsonArray.put(jsonObject);
+                }
+                for(StudentEntity a:studentEntityList_acc){
+                    JSONObject jsonObject=new JSONObject();
+                    jsonObject.put("studentName",a.getStudentName());
+                    jsonObject.put("studentID",a.getStudentId());
+                    jsonObject.put("signResult","YES");
+                    jsonArray.put(jsonObject);
                 }
                 tmp.put("studentList",jsonArray);
                 finalarr.put(tmp);

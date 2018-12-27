@@ -65,16 +65,20 @@ public class SignController {
     @RequestMapping(value = "information.sign", produces = "application/json;charset=UTF-8")//设置返回头为json
     @ResponseBody
     public String doGetInformation(@RequestBody String s){
-        int courseID;
+        int courseID,userID;
+        String type;
         try {
             JSONObject myJsonObject = new JSONObject(s);
             String temp = myJsonObject.getString("courseID");
             courseID = Integer.parseInt(temp);
+            temp= myJsonObject.getString("userID");
+            type=myJsonObject.getString("type");
+            userID=Integer.parseInt(temp);
         }catch (Exception ex){
             JSONObject jsonObject=new JSONObject();
             jsonObject.put("msg","INPUT_DATA_ERROR");
             return  jsonObject.toString();
         }
-        return signService.doGetInfo(courseID);
+        return signService.doGetInfo(courseID,type,userID);
     }
 }
