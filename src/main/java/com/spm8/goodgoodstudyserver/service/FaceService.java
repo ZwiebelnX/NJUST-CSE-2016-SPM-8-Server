@@ -19,6 +19,7 @@ import org.springframework.web.multipart.MultipartFile;
 import java.sql.Timestamp;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 
 @Service
 public class FaceService {
@@ -145,6 +146,7 @@ public class FaceService {
     //检查状态
     public String doCheckStatus(MultipartFile file, String courseID, String type, String checkCNT) {
         String str = "";
+        List<StudentEntity>     espStudent=new ArrayList<>();//谁的人脸识别不到了；
         JSONObject result = new JSONObject();
         List<Integer> checklist = courseDB.getCourseSignCnt(Integer.valueOf(courseID));
         List<StudentEntity>studentEntityList=new ArrayList<>();
@@ -178,9 +180,32 @@ public class FaceService {
             return jsonObject.toString();
         }
         try {
+            CreatSetUtil.com("tmp");
             JSONObject json = new JSONObject(str);
             JSONArray faces = json.getJSONArray("faces");
-            System.out.print("总人数为：" + faces.length());
+            for (int j = 0; j < faces.length(); j++) {
+                JSONObject josnToken = faces.getJSONObject(j);
+                String faceToken = josnToken.getString("face_token");
+                AddFaceUtil.add(faceToken, "tmp");
+            }
+            List<StudentEntity> students = studentDB.getALL();//修改成这堂课来的人；
+            for (StudentEntity student : students) {
+                String dataToken = student.getFaceToken();
+                String s = SearchUtil.search(dataToken, "tmp");
+                JSONObject comp = new JSONObject(s);
+                JSONArray results = comp.getJSONArray("results");
+                JSONObject object = results.getJSONObject(0);
+                float confidence = object.getFloat("confidence");
+                System.out.println("置信度为" + confidence);
+                JSONObject thresholdsJson = comp.getJSONObject("thresholds");
+                float e5 = thresholdsJson.getFloat("1e-5");
+                System.out.println("误识率为十万分之一的置信度阈值为：" + e5);
+                if ((double) confidence >= (double) e5) {
+                    System.out.println(student.getStudentName() + "极度相似，登录成功！");
+                }
+                else espStudent.add(student);
+            }
+            DeleteSetUtil.del("tmp");
             //获取上课的总人数，目前能监测到的人脸数量为faces.length(),减一下，不好好听课的同学数量返回到数据库。
             int allStudent =studentEntityList.size();
             int alive=faces.length();
