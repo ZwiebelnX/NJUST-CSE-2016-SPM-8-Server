@@ -73,10 +73,51 @@
             <h4>详情</h4>
         </div>
     </div>
-    <!-- TODO 列表动态生成 -->
 </div>
-<!-- Optional JavaScript -->
-<!-- jQuery first, then Popper.js, then Bootstrap JS -->
+
+<div class="modal fade" id="check-list-model" tabindex="-1" role="dialog" aria-labelledby="check-list-model"
+     aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title">课程签到信息</h5>
+                <button type="button" class="close" data-dismiss="modal" aria-hidden="true">×</button>
+            </div>
+            <div class="container" id="check-list-container">
+                <div class="row clearfix" style="margin-top:30px;">
+                </div>
+                <div class="row clearfix" style="margin-top:30px;">
+                    <div class="col-md-6 column">
+                        <h4>时间</h4>
+                    </div>
+                    <div class="col-md-3 column">
+                        <h4>听课率</h4>
+                    </div>
+                    <div class="col-md-3 column">
+                        <h4>详情</h4>
+                    </div>
+                </div>
+            </div>
+        </div><!-- /.modal-content -->
+    </div><!-- /.modal-dialog -->
+</div>
+
+<div class="modal fade" id="class-detail-model" tabindex="-1" role="dialog" aria-labelledby="check-list-model"
+     aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title">课程详情</h5>
+                <button type="button" class="close" data-dismiss="modal" aria-hidden="true">×</button>
+            </div>
+            <div class="container" id="class-detail-chart"></div>
+            <div class="container" id="class-detail-students-container">
+                <div class="row clearfix" style="margin-top:30px;">
+                </div>
+            </div>
+        </div><!-- /.modal-content -->
+    </div><!-- /.modal-dialog -->
+</div>
 
 <script>
     //TODO 远端验证ID有效性
@@ -86,7 +127,7 @@
             signOut();
         } else {
             $("#userName").text(sessionStorage.getItem("userName"));
-                showAllCourses()
+            showAllCourses()
         }
     });
 
@@ -98,10 +139,10 @@
         window.location.replace(window.location.href.substring(0, window.location.href.lastIndexOf('/')) + "/login.html");
     }
 
-    function showAllCourses(courseInfo) {
+    function showAllCourses() {
         let container = $("#info-container");
         if (sessionStorage.getItem("courseInfo") != null && sessionStorage.getItem("courseInfo") !== ""
-            && sessionStorage.getItem("courseInfo") !== "undefined"){
+            && sessionStorage.getItem("courseInfo") !== "undefined") {
             let courseInfo = JSON.parse(sessionStorage.getItem("courseInfo"));
             $.each(courseInfo, function (index, obj) {
                 //行元素
@@ -131,13 +172,15 @@
                 let instCol = $("<div></div>");
                 instCol.attr("class", "col-md-3 column");
                 //操作中的按钮
-                let deleteBtn = $("<button></button>");
-                deleteBtn.attr("type", "button");
-                deleteBtn.attr("class", "btn btn-outline-danger");
-                deleteBtn.attr("id", obj.courseID);
-                deleteBtn.attr("onclick", "showCourseDetail(id)");
-                deleteBtn.text("详情");
-                instCol.append(deleteBtn);
+                let detailBtn = $("<button></button>");
+                detailBtn.attr("type", "button");
+                detailBtn.attr("class", "btn btn-outline-danger");
+                detailBtn.attr("id", obj.courseID);
+                detailBtn.attr("onclick", "showCourseDetail(id)");
+                detailBtn.attr("data-toggle", "modal");
+                detailBtn.attr("data-target", "#check-list-model");
+                detailBtn.text("详情");
+                instCol.append(detailBtn);
                 row.append(instCol);
                 //添加至info-container元素
                 container.append(row)
@@ -158,6 +201,24 @@
 
             container.append(row)
         }
+    }
+
+    function showCourseDetail(id) {
+        let json = {
+            courseID : id,
+            userID : sessionStorage.getItem("userID"),
+            userType : sessionStorage.getItem("userType")
+        };
+        $.ajax({
+            type: "POST",
+            url: "information.sign",
+            contentType: "application/json; charset=utf-8",
+            data: JSON.stringify(json),
+            dataType: "json",
+            success: function (res) {
+                console.log(res);
+            }
+        })
     }
 </script>
 
