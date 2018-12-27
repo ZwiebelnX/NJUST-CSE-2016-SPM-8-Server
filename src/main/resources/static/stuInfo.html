@@ -32,10 +32,15 @@
         <div class="collapse navbar-collapse" id="navbarSupportedContent">
             <ul class="navbar-nav mr-auto">
                 <li class="nav-item active">
-                    <a class="nav-link" href="/stuInfo.html">学生信息<span class="sr-only">(current)</span></a>
+                    <a class="nav-link" href="javascript:window.location.replace(
+                    window.location.href.substring(0, window.location.href.lastIndexOf('/')) + '/stuInfo.html')">
+                        学生信息<span class="sr-only">(current)</span></a>
                 </li>
                 <li class="nav-item">
-                    <a class="nav-link" href="/classStatus.html" style="color:rgb(202, 203, 204)">状态统计</a>
+                    <a class="nav-link" href="javascript:window.location.replace(
+                    window.location.href.substring(0, window.location.href.lastIndexOf('/')) + '/classStatus.html')"
+                       style="color:rgb(202, 203, 204)">
+                        状态统计</a>
                 </li>
             </ul>
             <ul class="nav navbar-nav navbar-right ">
@@ -58,10 +63,10 @@
     </div>
     <div class="row clearfix" style="margin-top:30px;">
         <div class="col-md-3 column">
-            <h4>姓名</h4>
+            <h4>学号</h4>
         </div>
         <div class="col-md-6 column">
-            <h4>学号</h4>
+            <h4>姓名</h4>
         </div>
         <div class="col-md-3 column">
             <h4>操作</h4>
@@ -129,15 +134,16 @@
                     console.log(res);
                     showAllStudent(res)
                 },
-                error: function (res) {
-
+                error: function (XMLHttpRequest, textStatus) {
+                    alert("与服务器通讯失败！请刷新重试！");
+                    console.error(textStatus + ":" + XMLHttpRequest.status + " " + XMLHttpRequest.readyState);
                 }
             })
         }
     });
 
     //退出登录操作
-    function signOut(){
+    function signOut() {
         sessionStorage.removeItem("userType");
         sessionStorage.removeItem("teacherID");
         sessionStorage.removeItem("adminID");
@@ -145,25 +151,27 @@
     }
 
     //对DOM进行操作 显示学生信息
-    function showAllStudent(res){
+    function showAllStudent(res) {
         let container = $("#info-container");
-        if(res.studentsInfo != null && res.studentsInfo !== ""){
+        if (res.studentsInfo != null && res.studentsInfo !== "") {
             $.each(res.studentsInfo, function (index, obj) {
                 //行元素
                 let row = $("<div></div>");
                 row.attr("class", "row clearfix");
                 row.attr("style", "margin-top:5px;");
-                //名称列元素
-                let nameCol = $("<div></div>");
-                nameCol.attr("class", "col-md-3 column");
-                nameCol.text(obj.studentName);
-                row.append(nameCol);
+
                 //ID列元素
                 let IDCol = $("<div></div>");
-                IDCol.attr("class", "col-md-6 column");
-
+                IDCol.attr("class", "col-md-3 column");
                 IDCol.text(obj.studentID);
                 row.append(IDCol);
+
+                //名称列元素
+                let nameCol = $("<div></div>");
+                nameCol.attr("class", "col-md-6 column");
+                nameCol.text(obj.studentName);
+                row.append(nameCol);
+
                 //操作列元素
                 let instCol = $("<div></div>");
                 instCol.attr("class", "col-md-3 column");
@@ -176,29 +184,32 @@
                 deleteBtn.text("删除");
                 instCol.append(deleteBtn);
                 row.append(instCol);
+
                 //添加至info-container元素
                 container.append(row)
             })
         }
         //当返回的学生列表为空时的统一处理
-        else{
+        else {
             //行元素
             let row = $("<div></div>");
             row.attr("class", "row clearfix");
             row.attr("style", "margin-top:5px;");
+
             //名称列元素
             let InfoCol = $("<div></div>");
             InfoCol.attr("class", "col-md-12 column");
             InfoCol.text("暂无学生列表信息");
             row.append(InfoCol);
+
             container.append(row)
         }
     }
 
-    function deleteStudent(id){
+    function deleteStudent(id) {
         let json = {
-            userType : sessionStorage.getItem("userType"),
-            studentId : id
+            userType: sessionStorage.getItem("userType"),
+            studentId: id
         };
         $.ajax({
             type: "POST",
@@ -207,10 +218,9 @@
             data: JSON.stringify(json),
             dataType: "json",
             success: function (res) {
-                if(res.msg === "DELETE_SUCCESS"){
+                if (res.msg === "DELETE_SUCCESS") {
                     location.reload();
-                }
-                else{
+                } else {
                     alert("授权错误！请重试");
                 }
             },
@@ -260,6 +270,7 @@
             }
         });
     });
+
     //提交表单操作
     function update() {
         if (!$("#updateform").valid()) {

@@ -16,7 +16,7 @@
             integrity="sha384-JZR6Spejh4U02d8jOt6vLEHfe/JQGiRRSQQxSfFWpi1MquVdAyjUar5+76PVCmYl"
             crossorigin="anonymous"></script>
     <script src="https://cdn.bootcss.com/echarts/4.2.0-rc.2/echarts-en.common.js"></script>
-    <title>学生信息</title>
+    <title>状态统计</title>
     <style type="text/css">
 
     </style>
@@ -35,13 +35,20 @@
         <div class="collapse navbar-collapse" id="navbarSupportedContent">
             <ul class="navbar-nav mr-auto">
                 <li class="nav-item active">
-                    <a class="nav-link" href="/stuInfo.html" style="color:rgb(202, 203, 204)">学生信息</a>
+                    <a class="nav-link" href="javascript:window.location.replace(
+                    window.location.href.substring(0, window.location.href.lastIndexOf('/')) + '/stuInfo.html')"
+                       style="color:rgb(202, 203, 204)">学生信息</a>
                 </li>
                 <li class="nav-item">
-                    <a class="nav-link" href="/classStatus.html">状态统计<span class="sr-only">(current)</span></a>
+                    <a class="nav-link" href="javascript:window.location.replace(
+                    window.location.href.substring(0, window.location.href.lastIndexOf('/')) + '/classStatus.html')">
+                        状态统计<span class="sr-only">(current)</span></a>
                 </li>
             </ul>
             <ul class="nav navbar-nav navbar-right ">
+                <li class="text nav-item" style="margin-top:5px;margin-right:15px;">
+                    您好！<b id="userName"></b>
+                </li>
                 <li class="button">
                     <button type="button" class="btn btn-outline-danger" onclick="signOut()">退出</button>
                 </li>
@@ -49,15 +56,18 @@
         </div>
     </div><!-- /.container -->
 </div>
-<div class="container">
+<div class="container" id="info-container">
     <div class="row clearfix" style="margin-top:30px;">
     </div>
     <div class="row clearfix" style="margin-top:30px;">
         <div class="col-md-3 column">
+            <h4>序号</h4>
+        </div>
+        <div class="col-md-3 column">
             <h4>课程</h4>
         </div>
-        <div class="col-md-6 column">
-            <h4>时间</h4>
+        <div class="col-md-3 column">
+            <h4>上课地点</h4>
         </div>
         <div class="col-md-3 column">
             <h4>详情</h4>
@@ -76,31 +86,78 @@
             signOut();
         } else {
             $("#userName").text(sessionStorage.getItem("userName"));
-            let json = {
-                userType: sessionStorage.getItem("userType")
-            };
-            $.ajax({
-                type: "POST",
-                url: "login.login",
-                contentType: "application/json; charset=utf-8",
-                data: JSON.stringify(json),
-                success: function (res) {
-                    console.log(res);
-                    showAllStudent(res)
-                },
-                error: function (res) {
-
-                }
-            })
+                showAllCourses()
         }
     });
 
     //退出登录操作
-    function signOut(){
+    function signOut() {
         sessionStorage.removeItem("userType");
         sessionStorage.removeItem("teacherID");
         sessionStorage.removeItem("adminID");
         window.location.replace(window.location.href.substring(0, window.location.href.lastIndexOf('/')) + "/login.html");
+    }
+
+    function showAllCourses(courseInfo) {
+        let container = $("#info-container");
+        if (sessionStorage.getItem("courseInfo") != null && sessionStorage.getItem("courseInfo") !== ""
+            && sessionStorage.getItem("courseInfo") !== "undefined"){
+            let courseInfo = JSON.parse(sessionStorage.getItem("courseInfo"));
+            $.each(courseInfo, function (index, obj) {
+                //行元素
+                let row = $("<div></div>");
+                row.attr("class", "row clearfix");
+                row.attr("style", "margin-top:5px;");
+
+                //ID列元素
+                let IDCol = $("<div></div>");
+                IDCol.attr("class", "col-md-3 column");
+                IDCol.text(obj.courseID);
+                row.append(IDCol);
+
+                //名称列元素
+                let nameCol = $("<div></div>");
+                nameCol.attr("class", "col-md-3 column");
+                nameCol.text(obj.courseName);
+                row.append(nameCol);
+
+                //上课地点列元素
+                let classroomCol = $("<div></div>");
+                classroomCol.attr("class", "col-md-3 column");
+                classroomCol.text(obj.courseClassroom);
+                row.append(classroomCol);
+
+                //操作列元素
+                let instCol = $("<div></div>");
+                instCol.attr("class", "col-md-3 column");
+                //操作中的按钮
+                let deleteBtn = $("<button></button>");
+                deleteBtn.attr("type", "button");
+                deleteBtn.attr("class", "btn btn-outline-danger");
+                deleteBtn.attr("id", obj.courseID);
+                deleteBtn.attr("onclick", "showCourseDetail(id)");
+                deleteBtn.text("详情");
+                instCol.append(deleteBtn);
+                row.append(instCol);
+                //添加至info-container元素
+                container.append(row)
+            })
+        }
+        //当返回的列表为空时的统一处理
+        else {
+            //行元素
+            let row = $("<div></div>");
+            row.attr("class", "row clearfix");
+            row.attr("style", "margin-top:5px;");
+
+            //名称列元素
+            let InfoCol = $("<div></div>");
+            InfoCol.attr("class", "col-md-12 column");
+            InfoCol.text("暂无课程列表信息");
+            row.append(InfoCol);
+
+            container.append(row)
+        }
     }
 </script>
 

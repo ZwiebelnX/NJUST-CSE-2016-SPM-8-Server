@@ -27,7 +27,7 @@ public class DeleteSetUtil {
         }catch (Exception e) {
             e.printStackTrace();
         }
-        System.out.print(str);
+        System.out.print("删除结果："+str);
         return;
     }
     /**

@@ -62,11 +62,15 @@
                     sessionStorage.setItem("userName", res.realName);
                     if (res.userType === "TEACHER") {
                         sessionStorage.setItem("userID", res.teacherID);
+                        sessionStorage.setItem("courseInfo", JSON.stringify(res.courseList));
+                        window.location.replace(window.location.href.substring(0, window.location.href.lastIndexOf('/')) + "/classStatus.html")
                     }
                     if (res.userType === "ADMIN") {
                         sessionStorage.setItem("userID", res.adminID);
+                        sessionStorage.setItem("courseInfo", JSON.stringify(res.courseList));
+                        window.location.replace(window.location.href.substring(0, window.location.href.lastIndexOf('/')) + "/stuInfo.html")
                     }
-                    window.location.replace(window.location.href.substring(0, window.location.href.lastIndexOf('/')) + "/stuInfo.html")
+
                 }
             },
             error: function (XMLHttpRequest, textStatus) {

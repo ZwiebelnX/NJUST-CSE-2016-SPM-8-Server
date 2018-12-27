@@ -1,7 +1,6 @@
 package com.spm8.goodgoodstudyserver.service;
 
 import com.spm8.goodgoodstudyserver.dao.AccountDB;
-import com.spm8.goodgoodstudyserver.dao.Impl.AccountDBImpl;
 import com.spm8.goodgoodstudyserver.dao.CourseDB;
 import com.spm8.goodgoodstudyserver.entities.*;
 import com.spm8.goodgoodstudyserver.util.StringEncrypt;
@@ -9,8 +8,8 @@ import org.json.JSONArray;
 import org.json.JSONObject;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
-import org.springframework.web.bind.annotation.RequestMapping;
 
+import java.util.LinkedList;
 import java.util.List;
 
 @Service
@@ -46,29 +45,39 @@ public class LoginService {
             } else
                 msgString = "PASSWORD_ERROR";
         }
+
         JSONObject result = new JSONObject();
         result.put("msg", msgString);
+        List<CourseEntity> courseList = new LinkedList<>();
         if (msgString.equals("SUCCESS_TEACHER")) {
             result.put("realName", user.getUserRealName());
             result.put("teacherID", user.getUserId());
             result.put("userType", user.getType()); //加入用户类别 以便网页端调用
-            List<CourseEntity> list = courseDB.getCourseEntitiesByTeacherId(user.getUserId());
-            JSONArray jsonArray = new JSONArray();
-            for (CourseEntity courseEntity : list) {
-                JSONObject object = new JSONObject();
-                object.put("courseID", Integer.toString(courseEntity.getCourseId()));
-                object.put("courseName", courseEntity.getCourseName());
-                object.put("courseClassroom", courseEntity.getClassroom());
-                jsonArray.put(object);
-            }
-            result.put("courseList", jsonArray);
+            courseList = courseDB.getCourseEntitiesByTeacherId(user.getUserId());
         }
-        //TODO 网页端登录 写入文档
+
+        //TODO 网页端管理员登录写入文档
         if (msgString.equals("SUCCESS_ADMIN")) {
             result.put("realName", user.getUserRealName());
             result.put("adminID", user.getUserId());
             result.put("userType", user.getType());
+            if(user.getType().equals("ADMIN")){
+                Iterable<CourseEntity> tempIterator = courseDB.findAll();
+                for(CourseEntity courseEntity : tempIterator){
+                    courseList.add(courseEntity);
+                }
+            }
         }
+
+        JSONArray jsonArray = new JSONArray();
+        for (CourseEntity courseEntity : courseList) {
+            JSONObject object = new JSONObject();
+            object.put("courseID", Integer.toString(courseEntity.getCourseId()));
+            object.put("courseName", courseEntity.getCourseName());
+            object.put("courseClassroom", courseEntity.getClassroom());
+            jsonArray.put(object);
+        }
+        result.put("courseList", jsonArray);
         return result.toString();
     }
 }
