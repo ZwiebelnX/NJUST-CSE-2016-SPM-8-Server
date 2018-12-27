@@ -25,7 +25,7 @@
     function uploadPic() {
         var formData = new FormData($("#pic")[0]);
         $.ajax({
-            url: '/User/reg',  /*这是处理文件上传的servlet*/
+            url: '/status.check',  /*这是处理文件上传的servlet*/
             type: 'POST',
             data: formData,
             async: false,

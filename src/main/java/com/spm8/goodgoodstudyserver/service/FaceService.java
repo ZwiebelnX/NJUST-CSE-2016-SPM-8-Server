@@ -18,6 +18,7 @@ import org.springframework.web.multipart.MultipartFile;
 
 import java.sql.Timestamp;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -78,7 +79,7 @@ public class FaceService {
     }
 
     //处理统计事物
-    public List<StudentEntity> doSignStudent(List<StudentEntity> students, MultipartFile file, String stmp) {
+    public List<StudentEntity> doSignStudent(List<StudentEntity> students, MultipartFile file) {
         List<StudentEntity> escapeList = new ArrayList<>();
         try {
             String str = FaceUtil.check(file.getBytes());
@@ -113,15 +114,15 @@ public class FaceService {
 //                    System.out.println("学生"+student.getStudentName()+"跷课");
 //                }
 //            }
-            CreatSetUtil.com(stmp);
+            CreatSetUtil.com("stmp");
             for (int j = 0; j < faces.length(); j++) {
                 JSONObject josnToken = faces.getJSONObject(j);
                 String faceToken = josnToken.getString("face_token");
-                AddFaceUtil.add(faceToken, stmp);
+                AddFaceUtil.add(faceToken, "stmp");
             }
             for (StudentEntity student : students) {
                 String dataToken = student.getFaceToken();
-                String s = SearchUtil.search(dataToken, stmp);
+                String s = SearchUtil.search(dataToken, "stmp");
                 JSONObject comp = new JSONObject(s);
                 JSONArray results = comp.getJSONArray("results");
                 JSONObject object = results.getJSONObject(0);
@@ -135,7 +136,7 @@ public class FaceService {
                 } else escapeList.add(student);
             }
             //总到课人数加入数据库
-            DeleteSetUtil.del(stmp);
+            DeleteSetUtil.del("stmp");
             return escapeList;
         } catch (Exception e) {
             e.printStackTrace();
@@ -146,7 +147,7 @@ public class FaceService {
     //检查状态
     public String doCheckStatus(MultipartFile file, String courseID, String type, String checkCNT) {
         String str = "";
-        List<StudentEntity>     espStudent=new ArrayList<>();//谁的人脸识别不到了；
+        List<HashMap<StudentEntity,String>>state=new ArrayList<>();//谁的人脸识别不到了；
         JSONObject result = new JSONObject();
         List<Integer> checklist = courseDB.getCourseSignCnt(Integer.valueOf(courseID));
         List<StudentEntity>studentEntityList=new ArrayList<>();
@@ -183,30 +184,64 @@ public class FaceService {
             CreatSetUtil.com("tmp");
             JSONObject json = new JSONObject(str);
             JSONArray faces = json.getJSONArray("faces");
-            for (int j = 0; j < faces.length(); j++) {
-                JSONObject josnToken = faces.getJSONObject(j);
-                String faceToken = josnToken.getString("face_token");
-                AddFaceUtil.add(faceToken, "tmp");
-            }
+//            for (int j = 0; j < faces.length(); j++) {
+//                JSONObject josnToken = faces.getJSONObject(j);
+//                String faceToken = josnToken.getString("face_token");
+//                AddFaceUtil.add(faceToken, "tmp");
+//            }
             List<StudentEntity> students = studentDB.getALL();//修改成这堂课来的人；
+//            for (StudentEntity student : students) {
+//                String dataToken = student.getFaceToken();
+//                String s = SearchUtil.search(dataToken, "tmp");
+//                JSONObject comp = new JSONObject(s);
+//                JSONArray results = comp.getJSONArray("results");
+//                JSONObject object = results.getJSONObject(0);
+//                float confidence = object.getFloat("confidence");
+//                System.out.println("置信度为" + confidence);
+//                JSONObject thresholdsJson = comp.getJSONObject("thresholds");
+//                float e5 = thresholdsJson.getFloat("1e-5");
+//                System.out.println("误识率为十万分之一的置信度阈值为：" + e5);
+//                if ((double) confidence >= (double) e5) {
+//                    System.out.println(student.getStudentName() + "极度相似，登录成功！");
+//                }
+//                else espStudent.add(student);
+//            }
+//            DeleteSetUtil.del("tmp");
+            //获取上课的总人数，目前能监测到的人脸数量为faces.length(),减一下，不好好听课的同学数量返回到数据库。
             for (StudentEntity student : students) {
                 String dataToken = student.getFaceToken();
-                String s = SearchUtil.search(dataToken, "tmp");
-                JSONObject comp = new JSONObject(s);
-                JSONArray results = comp.getJSONArray("results");
-                JSONObject object = results.getJSONObject(0);
-                float confidence = object.getFloat("confidence");
-                System.out.println("置信度为" + confidence);
-                JSONObject thresholdsJson = comp.getJSONObject("thresholds");
-                float e5 = thresholdsJson.getFloat("1e-5");
-                System.out.println("误识率为十万分之一的置信度阈值为：" + e5);
-                if ((double) confidence >= (double) e5) {
-                    System.out.println(student.getStudentName() + "极度相似，登录成功！");
+                String id = student.getStudentName();
+                boolean flag = true;
+                for (int j = 0; j < faces.length(); j++) {
+                    JSONObject josnToken = faces.getJSONObject(j);
+                    String faceToken = josnToken.getString("face_token");
+                    JSONObject attributes=josnToken.getJSONObject("attributes");
+                    JSONObject headpose=attributes.getJSONObject("headpose");
+                    Float pitch_angle=headpose.getFloat("pitch_angle");
+                    String s = PostUtil.compare(dataToken, faceToken);
+                    JSONObject comp = new JSONObject(s);
+                    float confidence = comp.getFloat("confidence");
+                    System.out.println("置信度为" + confidence);
+                    JSONObject thresholdsJson = comp.getJSONObject("thresholds");
+                    float e5 = thresholdsJson.getFloat("1e-5");
+                    System.out.println("误识率为十万分之一的置信度阈值为：" + e5);
+                    if ((double) confidence >= (double) e5) {
+                        //更新数据库的签到数据以及到课学生数量更新+1
+                        System.out.println( id + "抬头角度为"+pitch_angle);
+                        HashMap<StudentEntity, String> map = new HashMap<>();
+                        map.put(student,pitch_angle.toString());
+                        flag = false;
+                        break;
+                    }
+                    if(flag==false)break;
                 }
-                else espStudent.add(student);
+                if (flag) {
+                    HashMap<StudentEntity, String> map = new HashMap<>();
+                    map.put(student,"SLEEP");
+                    state.add(map);
+                    System.out.println("学生"+student.getStudentName()+"睡觉");
+                }
             }
-            DeleteSetUtil.del("tmp");
-            //获取上课的总人数，目前能监测到的人脸数量为faces.length(),减一下，不好好听课的同学数量返回到数据库。
             int allStudent =studentEntityList.size();
             int alive=faces.length();
             alive=(alive>allStudent)?allStudent:alive;
