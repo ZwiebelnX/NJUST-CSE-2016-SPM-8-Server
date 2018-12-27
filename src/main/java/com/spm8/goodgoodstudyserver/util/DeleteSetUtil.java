@@ -19,6 +19,7 @@ public class DeleteSetUtil {
         map.put("api_key", "_WbTER4zNul6ANRxxupYZNtl6pNw8cQC");
         map.put("api_secret", "jEJ_oR0HjmEhkM5nEWYsWx_YfOKn7uNb");
         map.put("outer_id",id);
+        map.put("check_empty","0");
         String str =null;
         try{
             byte[] bacd = post(url, map);

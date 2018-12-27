@@ -147,7 +147,7 @@ public class FaceService {
     //检查状态
     public String doCheckStatus(MultipartFile file, String courseID, String type, String checkCNT) {
         String str = "";
-        List<HashMap<StudentEntity,String>>state=new ArrayList<>();//谁的人脸识别不到了；
+        List<HashMap<StudentEntity,String>>state=new ArrayList<>();//人脸状态，你改一下返回值或者想办法获取一下。
         JSONObject result = new JSONObject();
         List<Integer> checklist = courseDB.getCourseSignCnt(Integer.valueOf(courseID));
         List<StudentEntity>studentEntityList=new ArrayList<>();
@@ -184,12 +184,12 @@ public class FaceService {
             CreatSetUtil.com("tmp");
             JSONObject json = new JSONObject(str);
             JSONArray faces = json.getJSONArray("faces");
+            List<StudentEntity> students = studentDB.getALL();//修改成这堂课来的人；
 //            for (int j = 0; j < faces.length(); j++) {
 //                JSONObject josnToken = faces.getJSONObject(j);
 //                String faceToken = josnToken.getString("face_token");
 //                AddFaceUtil.add(faceToken, "tmp");
 //            }
-            List<StudentEntity> students = studentDB.getALL();//修改成这堂课来的人；
 //            for (StudentEntity student : students) {
 //                String dataToken = student.getFaceToken();
 //                String s = SearchUtil.search(dataToken, "tmp");
@@ -226,10 +226,9 @@ public class FaceService {
                     float e5 = thresholdsJson.getFloat("1e-5");
                     System.out.println("误识率为十万分之一的置信度阈值为：" + e5);
                     if ((double) confidence >= (double) e5) {
-                        //更新数据库的签到数据以及到课学生数量更新+1
                         System.out.println( id + "抬头角度为"+pitch_angle);
                         HashMap<StudentEntity, String> map = new HashMap<>();
-                        map.put(student,pitch_angle.toString());
+                        map.put(student,pitch_angle.toString());//返回的是学生+抬头角度[-180~180],String变量；
                         flag = false;
                         break;
                     }
