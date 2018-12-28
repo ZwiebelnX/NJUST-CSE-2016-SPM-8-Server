@@ -33,7 +33,7 @@ public class SignController {
         String courseid = "", signType = "", imgStr = "";
         courseid = request.getParameter("courseID");
         signType = request.getParameter("signType");
-        MultipartFile imgFile = request.getFile("img");
+        MultipartFile imgFile = request.getFile("images");
         return signService.doSignin(courseid, signType, imgFile);
     }
 

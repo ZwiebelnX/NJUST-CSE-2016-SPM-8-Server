@@ -21,7 +21,7 @@ public class CheckController {
     public String doCheck(MultipartHttpServletRequest request) {
         String courseID = request.getParameter("courseID");
         String type = request.getParameter("type");
-        MultipartFile file = request.getFile("img");
+        MultipartFile file = request.getFile("images");
         String checkCNT = request.getParameter("checkCNT");
         return faceService.doCheckStatus(file, courseID, type);
     }

@@ -21,7 +21,7 @@
 
     </style>
 </head>
-<body>
+<body style="background: url('/static/images/background.jpg');background-size:  cover;">
 
 <div class="navbar  navbar-expand-lg navbar-light bg-light navbar-fixed-top" role="navigation">
     <div class="container">
@@ -194,7 +194,7 @@
                 //操作中的按钮
                 let detailBtn = $("<button></button>");
                 detailBtn.attr("type", "button");
-                detailBtn.attr("class", "btn btn-outline-danger");
+                detailBtn.attr("class", "btn btn-outline-info");
                 detailBtn.attr("id", object.courseID);
                 detailBtn.attr("onclick", "showCheckList(id)");
                 detailBtn.attr("data-toggle", "modal");
@@ -248,7 +248,7 @@
                         row.append("<div class='col-md-6 column'>" + object.signTime + "</div>");
                         row.append("<div class='col-md-3 column'>" + object.rate * 100 + "%" + "</div>");
                         row.append("<div class='col-md-3 column'>" +
-                            "<button type='button' class='btn btn-outline-danger' data-toggle='modal' " +
+                            "<button type='button' class='btn btn-outline-info' data-toggle='modal' " +
                             "data-target='#class-detail-model' onclick='showClassDetail(\"" + object.signTime + "\")'>详情</button>" +
                             "</div>");
                         checkListContainer.append(row);

@@ -8,32 +8,31 @@
     <!-- Bootstrap CSS -->
     <link rel="stylesheet" href="https://cdn.bootcss.com/bootstrap/4.0.0/css/bootstrap.min.css"
           integrity="sha384-Gn5384xqQ1aoWXA+058RXPxPg6fy4IWvTNh0E263XmFcJlSAwiGgFAW/dAiS6JXm" crossorigin="anonymous">
-
     <title>系统登录</title>
+    <link rel="stylesheet" href="css/login-body.css">
+    <link rel="stylesheet" href="css/login-style.css">
 </head>
 <body>
 
-<div class="container" style="max-width: 500px;">
-    <div class="row align-items-center">
-        <div class="col text-center">
+<div class="container">
+    <section id="content">
+        <form action="">
             <h1>好好上课</h1>
-        </div>
-    </div>
-    <div class="row align-items-center">
-        <div class="col">
-            <form>
-                <div class="form-group">
-                    <label for="userName">工号</label>
-                    <input type="text" class="form-control" id="userName" placeholder="输入工号...">
-                </div>
-                <div class="form-group">
-                    <label for="password">密码</label>
-                    <input type="password" class="form-control" id="password" placeholder="输入密码...">
-                </div>
-                <button type="button" class="btn btn-primary" onclick="login()">登录</button>
-            </form>
-        </div>
-    </div>
+            <div>
+                <input type="text" placeholder="用户名" required="" id="userName" />
+            </div>
+            <div>
+                <input type="password" placeholder="密码" required="" id="password" />
+            </div>
+            <div class="">
+                <span class="help-block u-errormessage" id="js-server-helpinfo">&nbsp;</span>			</div>
+            <div>
+                <!-- <input type="submit" value="Log in" /> -->
+                <input type="button" value="登录" class="btn btn-primary" id="js-btn-login" onclick="login()"/>
+                <!-- <a href="#">Register</a> -->
+            </div>
+        </form><!-- form -->
+    </section><!-- content -->
 </div>
 <script>
     //登录
