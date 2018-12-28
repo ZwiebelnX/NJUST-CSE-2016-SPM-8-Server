@@ -159,7 +159,7 @@ public class FaceService {
         return  array;
     }
     //检查状态
-    public String doCheckStatus(MultipartFile file, String courseID, String type, String checkCNT) {
+    public String doCheckStatus(MultipartFile file, String courseID, String type) {
         String str = "";
         Map<StudentEntity,String>state=new HashMap<>();
         //List<HashMap<StudentEntity,String>>state=new ArrayList<>();//人脸状态，你改一下返回值或者想办法获取一下。

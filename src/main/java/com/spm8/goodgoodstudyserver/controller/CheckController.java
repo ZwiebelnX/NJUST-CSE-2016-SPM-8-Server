@@ -23,7 +23,7 @@ public class CheckController {
         String type = request.getParameter("type");
         MultipartFile file = request.getFile("img");
         String checkCNT = request.getParameter("checkCNT");
-        return faceService.doCheckStatus(file, courseID, type, checkCNT);
+        return faceService.doCheckStatus(file, courseID, type);
     }
 
 

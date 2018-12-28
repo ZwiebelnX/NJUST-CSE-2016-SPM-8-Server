@@ -175,6 +175,7 @@ public class SignService {
             for(int i=1;i<=maxCNT;i++){
                 JSONObject tmp=new JSONObject();
                 tmp.put("CNT",Integer.toString(i));
+                tmp.put("signTime",signUpDB.getSignupListBycouseIDAndSignupCNT(Integer.valueOf(courseID),i).get(0).getSignupTime().toString());
                 List<StudentEntity>studentEntityList=studentDB.getStudentBySucceessSigned(courseID,i,"NO");
                 List<StudentEntity>studentEntityList_acc=studentDB.getStudentBySucceessSigned(courseID,i,"YES");
                 List<CheckEntity>checkEntities=checkDB.getStudentByStudentId(courseID,i);
