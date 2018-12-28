@@ -73,8 +73,8 @@ public class TestController {
         list.add(zhao);
         return signService.doResignin("1","1",list);
     }
-    @RequestMapping("teststatus.test")
-    public String doTestStatus(){
-        return faceService.doCheckStatus(null,"1","FIRST_CHECK","0");
-    }
+//    @RequestMapping("teststatus.test")
+//    public String doTestStatus(){
+//        return faceService.doCheckStatus(null,"1","FIRST_CHECK","0");
+//    }
 }

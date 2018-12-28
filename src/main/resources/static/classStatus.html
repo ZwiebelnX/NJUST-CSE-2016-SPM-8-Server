@@ -114,7 +114,9 @@
                 <h5 class="modal-title">课程详情</h5>
                 <button type="button" class="close" data-dismiss="modal" aria-hidden="true">×</button>
             </div>
-            <div class="container" id="class-detail-chart"></div>
+            <p>状态统计表</p>
+            <div class="container" id="class-detail-chart" style="width:600px; height: 400px;"></div>
+            <p>签到情况</p>
             <div class="container" id="class-detail-students-container">
                 <div class="row clearfix" style="margin-top:30px;">
                 </div>
@@ -226,19 +228,22 @@
             dataType: "json",
             success: function (res) {
                 if (res.msg === "SUCCESS") {
+                    sessionStorage.setItem("courseDetail", JSON.stringify(res));
                     $.each(res.result, function (index, object) {
                         let row = $("<div class='row clearfix' style='margin-top: 2px; margin-bottom: 2px;'></div>");
-                        row.append("<div class='col-md-6 column'>" + object.CNT + "</div>");
+                        row.append("<div class='col-md-6 column'>" + object.signTime + "</div>");
                         row.append("<div class='col-md-3 column'>" + object.rate + "</div>");
                         row.append("<div class='col-md-3 column'>" +
                             "<button type='button' class='btn btn-outline-danger' data-toggle='modal' " +
-                            "data-target='#class-detail-model'>详情</button>" +
+                            "data-target='#class-detail-model' onclick='showClassDetail(\"" + object.signTime + "\")'>详情</button>" +
                             "</div>");
                         checkListContainer.append(row);
                     });
                 }
+                else{
+                    $("#wait-text").text("暂无状态统计信息！");
+                }
                 console.log(res);
-
             },
             complete: function () {
                 $("#wait-text").remove();
@@ -246,7 +251,33 @@
         })
     }
 
-    function showClassDetail(CNT) {
+    function showClassDetail(signTime) {
+        if(sessionStorage.getItem("courseDetail") != null && sessionStorage.getItem("courseDetail") !== ""
+            && sessionStorage.getItem("courseDetail") !== "undefined"){
+            let courseDetail = JSON.parse(sessionStorage.getItem("courseDetail"));
+            $.each(courseDetail.result, function (index, object) {
+                if(object.signTime === signTime){
+                    let chart = echarts.init(document.getElementById('class-detail-chart'));
+                    chart.setOption({
+                        series : [
+                            {
+                                name : '听课情况',
+                                type : 'pie',
+                                data : [
+                                    {value : object.rate, name : '听课'},
+                                    {value : 1 - object.rate, name : '走神'}
+                                ]
+                            }
+                        ]
+                    });
+
+                    $.each(object.studentList, function (index, object) {
+                        let container = $("#class-detail-students-container");
+
+                    })
+                }
+            })
+        }
 
     }
 </script>
