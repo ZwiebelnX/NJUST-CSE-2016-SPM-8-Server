@@ -72,7 +72,7 @@ public class SignController {
             String temp = myJsonObject.getString("courseID");
             courseID = Integer.parseInt(temp);
             temp= myJsonObject.getString("userID");
-            type=myJsonObject.getString("type");
+            type=myJsonObject.getString("userType");
             userID=Integer.parseInt(temp);
         }catch (Exception ex){
             JSONObject jsonObject=new JSONObject();

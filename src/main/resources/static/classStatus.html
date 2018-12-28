@@ -83,7 +83,7 @@
                 <h5 class="modal-title">课程签到信息</h5>
                 <button type="button" class="close" data-dismiss="modal" aria-hidden="true">×</button>
             </div>
-            <div class="container" id="check-list-container">
+            <div class="container">
                 <div class="row clearfix" style="margin-top:30px;">
                 </div>
                 <div class="row clearfix" style="margin-top:30px;">
@@ -98,11 +98,15 @@
                     </div>
                 </div>
             </div>
+            <div class="container" id="check-list-container">
+
+            </div>
+            </div>
         </div><!-- /.modal-content -->
     </div><!-- /.modal-dialog -->
 </div>
 
-<div class="modal fade" id="class-detail-model" tabindex="-1" role="dialog" aria-labelledby="check-list-model"
+<div class="modal fade" id="class-detail-model" tabindex="-1" role="dialog" aria-labelledby="class-detail-model"
      aria-hidden="true">
     <div class="modal-dialog">
         <div class="modal-content">
@@ -144,7 +148,7 @@
         if (sessionStorage.getItem("courseInfo") != null && sessionStorage.getItem("courseInfo") !== ""
             && sessionStorage.getItem("courseInfo") !== "undefined") {
             let courseInfo = JSON.parse(sessionStorage.getItem("courseInfo"));
-            $.each(courseInfo, function (index, obj) {
+            $.each(courseInfo, function (index, object) {
                 //行元素
                 let row = $("<div></div>");
                 row.attr("class", "row clearfix");
@@ -153,19 +157,19 @@
                 //ID列元素
                 let IDCol = $("<div></div>");
                 IDCol.attr("class", "col-md-3 column");
-                IDCol.text(obj.courseID);
+                IDCol.text(object.courseID);
                 row.append(IDCol);
 
                 //名称列元素
                 let nameCol = $("<div></div>");
                 nameCol.attr("class", "col-md-3 column");
-                nameCol.text(obj.courseName);
+                nameCol.text(object.courseName);
                 row.append(nameCol);
 
                 //上课地点列元素
                 let classroomCol = $("<div></div>");
                 classroomCol.attr("class", "col-md-3 column");
-                classroomCol.text(obj.courseClassroom);
+                classroomCol.text(object.courseClassroom);
                 row.append(classroomCol);
 
                 //操作列元素
@@ -175,8 +179,8 @@
                 let detailBtn = $("<button></button>");
                 detailBtn.attr("type", "button");
                 detailBtn.attr("class", "btn btn-outline-danger");
-                detailBtn.attr("id", obj.courseID);
-                detailBtn.attr("onclick", "showCourseDetail(id)");
+                detailBtn.attr("id", object.courseID);
+                detailBtn.attr("onclick", "showCheckList(id)");
                 detailBtn.attr("data-toggle", "modal");
                 detailBtn.attr("data-target", "#check-list-model");
                 detailBtn.text("详情");
@@ -203,11 +207,16 @@
         }
     }
 
-    function showCourseDetail(id) {
+    function showCheckList(id) {
+        let checkListContainer = $("#check-list-container");
+        checkListContainer.empty();
+        checkListContainer.append("<div id='wait-text' class='row clearfix'>" +
+            "<div class='col-md-12 column'>获取详细信息中...</div>" +
+            "</div>");
         let json = {
-            courseID : id,
-            userID : sessionStorage.getItem("userID"),
-            userType : sessionStorage.getItem("userType")
+            courseID: id,
+            userID: sessionStorage.getItem("userID"),
+            userType: sessionStorage.getItem("userType")
         };
         $.ajax({
             type: "POST",
@@ -216,9 +225,29 @@
             data: JSON.stringify(json),
             dataType: "json",
             success: function (res) {
+                if (res.msg === "SUCCESS") {
+                    $.each(res.result, function (index, object) {
+                        let row = $("<div class='row clearfix' style='margin-top: 2px; margin-bottom: 2px;'></div>");
+                        row.append("<div class='col-md-6 column'>" + object.CNT + "</div>");
+                        row.append("<div class='col-md-3 column'>" + object.rate + "</div>");
+                        row.append("<div class='col-md-3 column'>" +
+                            "<button type='button' class='btn btn-outline-danger' data-toggle='modal' " +
+                            "data-target='#class-detail-model'>详情</button>" +
+                            "</div>");
+                        checkListContainer.append(row);
+                    });
+                }
                 console.log(res);
+
+            },
+            complete: function () {
+                $("#wait-text").remove();
             }
         })
+    }
+
+    function showClassDetail(CNT) {
+
     }
 </script>
 
