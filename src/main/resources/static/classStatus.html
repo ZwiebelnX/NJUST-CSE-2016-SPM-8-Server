@@ -59,7 +59,7 @@
 <div class="container" id="info-container">
     <div class="row clearfix" style="margin-top:30px;">
     </div>
-    <div class="row clearfix" style="margin-top:30px;">
+    <div class="row clearfix text-center" style="margin-top:30px;">
         <div class="col-md-3 column">
             <h4>序号</h4>
         </div>
@@ -83,24 +83,22 @@
                 <h5 class="modal-title">课程签到信息</h5>
                 <button type="button" class="close" data-dismiss="modal" aria-hidden="true">×</button>
             </div>
-            <div class="container">
+            <div class="container text-center">
                 <div class="row clearfix" style="margin-top:30px;">
                 </div>
                 <div class="row clearfix" style="margin-top:30px;">
                     <div class="col-md-6 column">
-                        <h4>时间</h4>
+                        <h5>时间</h5>
                     </div>
                     <div class="col-md-3 column">
-                        <h4>听课率</h4>
+                        <h5>听课率</h5>
                     </div>
                     <div class="col-md-3 column">
-                        <h4>详情</h4>
+                        <h5>详情</h5>
                     </div>
                 </div>
             </div>
             <div class="container" id="check-list-container">
-
-            </div>
             </div>
         </div><!-- /.modal-content -->
     </div><!-- /.modal-dialog -->
@@ -108,19 +106,35 @@
 
 <div class="modal fade" id="class-detail-model" tabindex="-1" role="dialog" aria-labelledby="class-detail-model"
      aria-hidden="true">
-    <div class="modal-dialog">
+    <div class="modal-dialog modal-lg">
         <div class="modal-content">
             <div class="modal-header">
                 <h5 class="modal-title">课程详情</h5>
                 <button type="button" class="close" data-dismiss="modal" aria-hidden="true">×</button>
             </div>
-            <p>状态统计表</p>
-            <div class="container" id="class-detail-chart" style="width:600px; height: 400px;"></div>
-            <p>签到情况</p>
-            <div class="container" id="class-detail-students-container">
-                <div class="row clearfix" style="margin-top:30px;">
+            <div class="container">
+                <div class="row clearfix  text-center ">
+                    <div class="col-md-6 column" style="margin-top: 10px;">
+                        <h5>状态统计表</h5>
+                    </div>
+                    <div class="col-md-6 column" style="margin-top: 10px;">
+                        <h5>签到情况</h5><b id="student-arrived-status-text"></b>
+                    </div>
+                </div>
+                <div class="row clearfix">
+                    <div class="col-md-6 column" style="margin-top: 10px;">
+                        <div class="container" id="class-detail-chart" style="width: 300%; height: 300%;"></div>
+                    </div>
+                    <div class="col-md-6 column pre-scrollable" id="class-detail-students-container"
+                         style="margin-top: 10px;">
+                    </div>
                 </div>
             </div>
+
+            <!--<div class="container" id="">-->
+            <!--<div class="row clearfix" style="margin-top:30px;">-->
+            <!--</div>-->
+            <!--</div>-->
         </div><!-- /.modal-content -->
     </div><!-- /.modal-dialog -->
 </div>
@@ -153,7 +167,7 @@
             $.each(courseInfo, function (index, object) {
                 //行元素
                 let row = $("<div></div>");
-                row.attr("class", "row clearfix");
+                row.attr("class", "row clearfix text-center");
                 row.attr("style", "margin-top:5px;");
 
                 //ID列元素
@@ -230,17 +244,16 @@
                 if (res.msg === "SUCCESS") {
                     sessionStorage.setItem("courseDetail", JSON.stringify(res));
                     $.each(res.result, function (index, object) {
-                        let row = $("<div class='row clearfix' style='margin-top: 2px; margin-bottom: 2px;'></div>");
+                        let row = $("<div class='row clearfix text-center' style='margin-top: 2px; margin-bottom: 2px;'></div>");
                         row.append("<div class='col-md-6 column'>" + object.signTime + "</div>");
-                        row.append("<div class='col-md-3 column'>" + object.rate + "</div>");
+                        row.append("<div class='col-md-3 column'>" + object.rate * 100 + "%" + "</div>");
                         row.append("<div class='col-md-3 column'>" +
                             "<button type='button' class='btn btn-outline-danger' data-toggle='modal' " +
                             "data-target='#class-detail-model' onclick='showClassDetail(\"" + object.signTime + "\")'>详情</button>" +
                             "</div>");
                         checkListContainer.append(row);
                     });
-                }
-                else{
+                } else {
                     $("#wait-text").text("暂无状态统计信息！");
                 }
                 console.log(res);
@@ -252,29 +265,50 @@
     }
 
     function showClassDetail(signTime) {
-        if(sessionStorage.getItem("courseDetail") != null && sessionStorage.getItem("courseDetail") !== ""
-            && sessionStorage.getItem("courseDetail") !== "undefined"){
+
+        if (sessionStorage.getItem("courseDetail") != null && sessionStorage.getItem("courseDetail") !== ""
+            && sessionStorage.getItem("courseDetail") !== "undefined") {
             let courseDetail = JSON.parse(sessionStorage.getItem("courseDetail"));
             $.each(courseDetail.result, function (index, object) {
-                if(object.signTime === signTime){
+                if (object.signTime === signTime) {
                     let chart = echarts.init(document.getElementById('class-detail-chart'));
                     chart.setOption({
-                        series : [
+                        tooltip: {
+                            trigger: 'item',
+                            formatter: "{a} <br/>{b} :{d}%"
+                        },
+                        series: [
                             {
-                                name : '听课情况',
-                                type : 'pie',
-                                data : [
-                                    {value : object.rate, name : '听课'},
-                                    {value : 1 - object.rate, name : '走神'}
+                                name: '听课情况',
+                                type: 'pie',
+                                shadowBlur: 200,
+                                shadowColor: 'rgba(0, 0, 0, 0.5)',
+                                data: [
+                                    {value: object.rate, name: '听课'},
+                                    {value: 1 - object.rate, name: '走神'}
                                 ]
                             }
                         ]
                     });
-
+                    let totalStudent = 0;
+                    let arrivedStudent = 0;
+                    let container = $("#class-detail-students-container");
+                    container.empty();
                     $.each(object.studentList, function (index, object) {
-                        let container = $("#class-detail-students-container");
-
-                    })
+                        totalStudent ++;
+                        let raw = $("<div class='row clearfix' style='margin-top: 5px;'></div>");
+                        raw.append("<div class='col-md-9 column'>" + object.studentID + "  " +
+                            object.studentName + "</div>");
+                        if (object.signResult === 'YES') {
+                            raw.append("<div class='col-md-3 column'><b>已到</b></div>");
+                            arrivedStudent ++;
+                        } else {
+                            raw.append("<div class='col-md-3 column'><b style='color: red;'>未到</b></div>")
+                        }
+                        raw.append("<hr style='padding:0; margin: 0; width: 90%' />");
+                        container.append(raw);
+                    });
+                    $("#student-arrived-status-text").text("应到：" + totalStudent + "人，实到" + arrivedStudent + "人");
                 }
             })
         }
