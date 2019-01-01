@@ -65,7 +65,7 @@ public class FaceService {
             studentDB.save(user);
             List<StudentEntity> students = studentDB.getALL();
             int count = students.size() - 1;
-            AddFaceUtil.add(faceToken, id);
+            AddFaceUtil.add(faceToken, "000");
         } catch (Exception e) {
             e.printStackTrace();
             JSONObject jsonObject = new JSONObject();
